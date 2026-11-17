@@ -48,6 +48,11 @@ The public `/observatory` section provides server-mediated research tools for:
 - NASA DONKI coronal mass ejection and solar-flare event records.
 - NASA Exoplanet Archive Planetary Systems Composite Parameters through TAP/ADQL.
 - arXiv research preprints, with optional Crossref publication-metadata candidates.
+- ESA Gaia DR3 astrometry through its public TAP+ service.
+- ESA Euclid public observation metadata through its anonymous TAP+ interface.
+- USGS ComCat earthquake summary feeds in GeoJSON format.
+- NASA/JPL CNEOS small-body close-approach records.
+- NASA GIBS MODIS Terra global true-colour imagery through WMS.
 
 Provider requests run through server-side routes under `app/api/science/`. Provider keys are not sent to browser code. `NASA_API_KEY` is used by the DONKI integration (the NASA demo key is the fallback); `CROSSREF_MAILTO` is optional and falls back to the configured public contact email.
 
@@ -55,7 +60,9 @@ The Observatory displays source links and retrieval times. arXiv records are lab
 
 The APOD integration uses `https://science.nasa.gov/wp-json/wp/v2/apod-basic` rather than the retiring legacy APOD endpoint. The Exoplanet Atlas uses a bounded query of `pscomppars`. arXiv searches return at most 20 records and use a three-second in-process spacing queue; serverless instances do not share in-memory state, so provider usage still requires monitoring.
 
-Gaia, Euclid, NASA ADS, USGS and NASA GIBS are deferred to later phases.
+The Stellar Census makes a bounded Gaia DR3 query for high-signal-to-noise positive parallaxes. Its displayed distance is the simple inverse-parallax value and is explicitly labelled as an approximation. The Euclid panel queries the public `ivoa.obscore` metadata table; it does not download large science products. The Earth Monitor uses USGS' documented GeoJSON summary feeds and NASA GIBS WMS imagery. The asteroid panel requests at most 20 JPL close-approach records within 0.05 au over 60 days and caches the response for one hour. JPL asks clients to avoid excessive or redundant requests and to cache results.
+
+All new provider calls are server-mediated. Gaia and Euclid TAP queries are bounded synchronous queries; larger analyses should use the archives' asynchronous interfaces or their science portals. NASA ADS is not enabled in this phase because it requires a separately provisioned private API token; arXiv and Crossref remain the public literature services.
 
 ## Supabase setup
 
