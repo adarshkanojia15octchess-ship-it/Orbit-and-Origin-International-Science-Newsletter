@@ -27,6 +27,7 @@ export async function GET() {
       ? safeExternalUrl(parsed.data.hdurl, [
           "science.nasa.gov",
           "assets.science.nasa.gov",
+          "images-assets.nasa.gov",
           "apod.nasa.gov",
         ])
       : null;

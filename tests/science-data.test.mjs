@@ -8,23 +8,25 @@ import {
 } from "../lib/science/normalizers.mjs";
 
 test("arXiv parser extracts titles, authors, categories and preprint identifiers", () => {
-  const xml = \`<?xml version="1.0"?>
-  <feed xmlns="http://www.w3.org/2005/Atom" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/">
-    <opensearch:totalResults>1</opensearch:totalResults>
-    <entry>
-      <id>https://arxiv.org/abs/2601.01234v1</id>
-      <title>Mapping galaxies &amp; cosmic structure</title>
-      <summary>We study the large-scale structure of the Universe.</summary>
-      <published>2026-01-05T12:00:00Z</published>
-      <updated>2026-01-06T12:00:00Z</updated>
-      <author><name>Jane Example</name></author>
-      <author><name>Alex Researcher</name></author>
-      <category term="astro-ph.CO" scheme="https://arxiv.org/schemas/atom"/>
-      <arxiv:doi>10.1234/example.1</arxiv:doi>
-      <arxiv:journal_ref>Journal of Example Science</arxiv:journal_ref>
-      <link href="https://arxiv.org/abs/2601.01234v1" rel="alternate" type="text/html"/>
-    </entry>
-  </feed>\`;
+  const xml = [
+    '<?xml version="1.0"?>',
+    '<feed xmlns="http://www.w3.org/2005/Atom" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/">',
+    '<opensearch:totalResults>1</opensearch:totalResults>',
+    '<entry>',
+    '<id>https://arxiv.org/abs/2601.01234v1</id>',
+    '<title>Mapping galaxies &amp; cosmic structure</title>',
+    '<summary>We study the large-scale structure of the Universe.</summary>',
+    '<published>2026-01-05T12:00:00Z</published>',
+    '<updated>2026-01-06T12:00:00Z</updated>',
+    '<author><name>Jane Example</name></author>',
+    '<author><name>Alex Researcher</name></author>',
+    '<category term="astro-ph.CO" scheme="https://arxiv.org/schemas/atom"/>',
+    '<arxiv:doi>10.1234/example.1</arxiv:doi>',
+    '<arxiv:journal_ref>Journal of Example Science</arxiv:journal_ref>',
+    '<link href="https://arxiv.org/abs/2601.01234v1" rel="alternate" type="text/html"/>',
+    '</entry>',
+    '</feed>',
+  ].join("\n");
   const parsed = parseArxivFeed(xml);
   assert.equal(parsed.totalResults, 1);
   assert.equal(parsed.papers.length, 1);
