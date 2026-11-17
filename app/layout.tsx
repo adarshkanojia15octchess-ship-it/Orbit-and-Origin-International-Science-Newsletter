@@ -15,6 +15,7 @@ export const metadata: Metadata = {
 
 const nav = [
   ["Issues", "/issues"],
+  ["Science Observatory", "/observatory"],
   ["Articles", "/articles"],
   ["Tapestry of Worlds", "/departments/tapestry-of-worlds"],
   ["Frontier Tech", "/departments/frontier-tech"],
