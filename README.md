@@ -40,6 +40,23 @@ Requirements: Node.js 20.9+ and npm.
    npm run build
    ```
 
+## Science Observatory
+
+The public `/observatory` section provides server-mediated research tools for:
+
+- NASA Astronomy Picture of the Day through the current `science.nasa.gov` APOD Basic endpoint.
+- NASA DONKI coronal mass ejection and solar-flare event records.
+- NASA Exoplanet Archive Planetary Systems Composite Parameters through TAP/ADQL.
+- arXiv research preprints, with optional Crossref publication-metadata candidates.
+
+Provider requests run through server-side routes under `app/api/science/`. Provider keys are not sent to browser code. `NASA_API_KEY` is used by the DONKI integration (the NASA demo key is the fallback); `CROSSREF_MAILTO` is optional and falls back to the configured public contact email.
+
+The Observatory displays source links and retrieval times. arXiv records are labelled as preprints. Crossref title matches are candidates and must be compared with the DOI record before citation. Exoplanet measurements are shown as supplied by the archive; missing values are not estimated.
+
+The APOD integration uses `https://science.nasa.gov/wp-json/wp/v2/apod-basic` rather than the retiring legacy APOD endpoint. The Exoplanet Atlas uses a bounded query of `pscomppars`. arXiv searches return at most 20 records and use a three-second in-process spacing queue; serverless instances do not share in-memory state, so provider usage still requires monitoring.
+
+Gaia, Euclid, NASA ADS, USGS and NASA GIBS are deferred to later phases.
+
 ## Supabase setup
 
 Create a Supabase project and configure:

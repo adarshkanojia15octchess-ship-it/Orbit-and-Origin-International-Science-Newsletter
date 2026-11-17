@@ -227,3 +227,84 @@ button:disabled { opacity:.35; cursor:not-allowed; }
 .footer-contact a { color:var(--oo-gold); text-underline-offset:4px; }
 @media(max-width:900px) { .lead-issue { grid-template-columns:1fr; } .lead-issue-art { min-height:460px; max-width:560px; width:100%; } }
 @media(max-width:620px) { .lead-issue { padding-top:50px; padding-bottom:60px; } .lead-issue-art { min-height:390px; padding:22px; } }
+
+/* Science Observatory */
+.oo-observatory { max-width:1480px; margin:0 auto; padding:clamp(44px,7vw,96px) clamp(20px,6vw,88px) 100px; }
+.oo-observatory-hero { max-width:980px; padding-bottom:54px; border-bottom:1px solid var(--oo-line); }
+.oo-observatory-hero h1 { margin:18px 0 20px; font-size:clamp(48px,8vw,96px); letter-spacing:-.04em; line-height:.98; }
+.oo-observatory-hero h1 em { color:var(--oo-gold); font-weight:400; }
+.oo-observatory-hero>p { max-width:720px; color:#C4CDD5; font-size:16px; line-height:1.85; }
+.oo-observatory-principle { display:flex; flex-wrap:wrap; gap:8px 18px; margin-top:26px; color:var(--oo-gold); font-size:10px; letter-spacing:.16em; }
+.oo-observatory-principle strong { color:var(--oo-paper); font-weight:500; }
+.oo-observatory-workbench { padding-top:42px; }
+.oo-observatory-tabs { display:flex; flex-wrap:wrap; gap:8px; padding-bottom:22px; border-bottom:1px solid var(--oo-line); }
+.oo-observatory-tabs button { padding:12px 16px; border:1px solid #34506A; background:#102238; color:#C5CDD4; font-size:10px; letter-spacing:.1em; text-transform:uppercase; }
+.oo-observatory-tabs button.is-active { border-color:var(--oo-gold); color:var(--oo-gold); background:#14283D; }
+.oo-observatory-panel { padding:clamp(24px,4vw,48px) 0; }
+.oo-observatory-panel-heading { display:flex; justify-content:space-between; align-items:end; gap:22px; margin-bottom:30px; }
+.oo-observatory-panel-heading h2 { margin:10px 0 0; font-size:clamp(32px,4.5vw,54px); }
+.oo-observatory-source-mark { color:var(--oo-gold); border:1px solid rgba(213,183,127,.42); padding:8px 12px; font-size:9px; letter-spacing:.15em; white-space:nowrap; }
+.oo-observatory-status,.oo-observatory-note,.oo-observatory-results-count,.oo-observatory-last-updated { color:var(--oo-muted); font-size:12px; line-height:1.7; }
+.oo-observatory-status { border-left:2px solid var(--oo-gold); padding-left:14px; }
+.oo-observatory-error { padding:14px 16px; border:1px solid rgba(220,130,112,.45); color:#F0B4A6; background:rgba(110,35,28,.14); font-size:13px; }
+.oo-apod-layout { display:grid; grid-template-columns:minmax(0,1.2fr) minmax(280px,.8fr); gap:clamp(24px,4vw,54px); align-items:start; }
+.oo-apod-art { min-height:260px; display:flex; align-items:center; justify-content:center; background:#071321; border:1px solid var(--oo-line); }
+.oo-apod-art img { display:block; width:100%; height:auto; max-height:680px; object-fit:contain; }
+.oo-observatory-placeholder { padding:36px; text-align:center; color:var(--oo-muted); }
+.oo-observatory-placeholder span { color:var(--oo-gold); font-size:10px; letter-spacing:.18em; }
+.oo-apod-copy h3 { margin:12px 0 16px; font-size:clamp(28px,3vw,40px); line-height:1.15; }
+.oo-apod-copy>p:not(.oo-observatory-date) { color:#C4CDD5; font-size:14px; line-height:1.85; }
+.oo-observatory-date,.oo-observatory-credit { color:var(--oo-muted); font-size:10px; letter-spacing:.08em; }
+.oo-observatory-text-link { display:inline-block; margin-top:12px; color:var(--oo-gold); font-size:11px; text-underline-offset:4px; }
+.oo-observatory-text-link:hover { text-decoration:underline; }
+.oo-observatory-event-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; margin:22px 0; }
+.oo-observatory-event,.oo-planet-card,.oo-paper-card { min-width:0; padding:24px; border:1px solid var(--oo-line); background:var(--oo-slate); }
+.oo-observatory-event-top,.oo-paper-meta { display:flex; flex-wrap:wrap; justify-content:space-between; gap:8px; color:var(--oo-gold); font-size:9px; letter-spacing:.12em; text-transform:uppercase; }
+.oo-observatory-event-top time,.oo-paper-meta time { color:var(--oo-muted); }
+.oo-observatory-event h3 { margin:16px 0 10px; font-size:25px; }
+.oo-observatory-event p { color:#C4CDD5; font-size:13px; }
+.oo-observatory-filters { display:grid; grid-template-columns:minmax(200px,1.5fr) minmax(190px,1fr) auto; gap:14px; align-items:end; padding:20px 0; border-top:1px solid var(--oo-line); border-bottom:1px solid var(--oo-line); }
+.oo-observatory-filters label { display:grid; gap:8px; color:#C5CDD4; font-size:10px; letter-spacing:.1em; text-transform:uppercase; }
+.oo-observatory-filters input,.oo-observatory-filters select { min-height:46px; width:100%; padding:10px 12px; color:var(--oo-paper); background:#102238; border:1px solid #34506A; border-radius:0; text-transform:none; letter-spacing:normal; }
+.oo-observatory-filters input::placeholder { color:#8292A2; }
+.oo-observatory-filters button { min-height:46px; padding:0 18px; font-size:10px; letter-spacing:.1em; text-transform:uppercase; white-space:nowrap; }
+.oo-observatory-results-count { margin:18px 0; }
+.oo-planet-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; margin:22px 0; }
+.oo-planet-card h3 { margin:10px 0 4px; font-size:26px; }
+.oo-planet-host { color:var(--oo-muted); font-size:11px; }
+.oo-planet-card dl { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px 18px; margin:20px 0 0; padding-top:18px; border-top:1px solid var(--oo-line); }
+.oo-planet-card dt { color:var(--oo-muted); font-size:9px; letter-spacing:.1em; text-transform:uppercase; }
+.oo-planet-card dd { margin:4px 0 0; color:var(--oo-paper); font-size:13px; }
+.oo-paper-list { display:grid; gap:14px; margin-top:20px; }
+.oo-paper-card h3 { margin:14px 0 8px; font-size:clamp(22px,2.5vw,30px); line-height:1.2; }
+.oo-paper-card h3 a:hover { color:var(--oo-gold); }
+.oo-paper-card>p { color:#C4CDD5; font-size:13px; line-height:1.75; }
+.oo-paper-card .oo-paper-authors { color:var(--oo-muted); font-size:11px; }
+.oo-paper-categories { display:flex; flex-wrap:wrap; gap:6px; margin:14px 0; }
+.oo-paper-categories span { border:1px solid var(--oo-line); color:#B9C3CC; padding:5px 8px; font-size:9px; }
+.oo-observatory-secondary-button { border:1px solid rgba(213,183,127,.5); background:transparent; color:var(--oo-gold); padding:9px 12px; font-size:10px; }
+.oo-observatory-secondary-button:disabled { opacity:.5; cursor:wait; }
+.oo-crossref-results { margin-top:18px; padding:16px; border-left:2px solid var(--oo-gold); background:rgba(10,25,43,.5); }
+.oo-crossref-results>strong { font-size:11px; color:var(--oo-gold); }
+.oo-crossref-results p { font-size:12px; color:#C4CDD5; line-height:1.65; }
+.oo-crossref-results p span { font-size:9px; color:var(--oo-muted); text-transform:uppercase; letter-spacing:.1em; }
+.oo-crossref-results a { color:var(--oo-paper); text-decoration:underline; text-underline-offset:3px; }
+.oo-crossref-results small { display:block; color:var(--oo-muted); font-size:10px; line-height:1.7; }
+.oo-observatory-last-updated { padding-top:18px; border-top:1px solid var(--oo-line); }
+.oo-observatory-integrity { margin-top:34px; padding:22px 24px; border:1px solid var(--oo-line); background:#102238; }
+.oo-observatory-integrity p { margin-bottom:0; max-width:1000px; color:#C4CDD5; font-size:12px; line-height:1.8; }
+@media(max-width:900px) {
+  .oo-apod-layout { grid-template-columns:1fr; }
+  .oo-planet-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .oo-observatory-event-list { grid-template-columns:1fr; }
+}
+@media(max-width:620px) {
+  .oo-observatory { padding-top:42px; }
+  .oo-observatory-panel-heading { align-items:flex-start; flex-direction:column; }
+  .oo-observatory-tabs { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .oo-observatory-tabs button { padding:11px 8px; font-size:9px; }
+  .oo-observatory-filters { grid-template-columns:1fr; }
+  .oo-observatory-filters button { width:100%; }
+  .oo-planet-grid { grid-template-columns:1fr; }
+  .oo-paper-card,.oo-observatory-event,.oo-planet-card { padding:20px; }
+}
