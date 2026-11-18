@@ -1,0 +1,57 @@
+name: Production route smoke test
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_url:
+        description: Exact assigned production hostname (optional; otherwise PRODUCTION_URL repository variable or documented fallback)
+        required: false
+        type: string
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-smoke
+  cancel-in-progress: true
+
+jobs:
+  smoke:
+    name: Check public production routes
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      TARGET_URL: ${{ inputs.target_url || vars.PRODUCTION_URL || 'https://orbit-and-origin-international-scie.vercel.app' }}
+    steps:
+      - name: Validate target URL
+        run: |
+          node -e "const u = new URL(process.env.TARGET_URL); if (u.protocol !== 'https:') process.exit(1); console.log('Checking', u.origin)"
+      - name: Wait for deployment and verify public routes
+        shell: bash
+        run: |
+          set -euo pipefail
+          for path in / /publisher /issues /articles; do
+            echo "Checking $path"
+            code="$(curl --silent --show-error --location --retry 12 --retry-all-errors --retry-delay 10 --max-time 25 --output /tmp/route-body --write-out '%{http_code}' "${TARGET_URL%/}$path")"
+            if [[ "$code" != "200" ]]; then
+              echo "::error::${TARGET_URL%/}$path returned HTTP $code"
+              head -c 1200 /tmp/route-body || true
+              exit 1
+            fi
+            echo "PASS $path (HTTP $code)"
+          done
+      - name: Confirm private API rejects anonymous requests
+        shell: bash
+        run: |
+          set -euo pipefail
+          for path in /api/publisher/overview /api/publisher/health; do
+            code="$(curl --silent --show-error --location --max-time 25 --output /tmp/api-body --write-out '%{http_code}' "${TARGET_URL%/}$path")"
+            if [[ "$code" != "401" ]]; then
+              echo "::error::Unauthenticated $path returned HTTP $code; expected 401"
+              head -c 1200 /tmp/api-body || true
+              exit 1
+            fi
+            echo "PASS $path rejects anonymous access (HTTP 401)"
+          done
