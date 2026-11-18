@@ -34,7 +34,7 @@ export default async function AdminDashboardPage({ searchParams }: { searchParam
   return (
     <main className="page-shell">
       <div style={{ display: "flex", justifyContent: "space-between", gap: 20, flexWrap: "wrap" }}>
-        <div><span className="kicker">Authenticated workspace</span><h1>Publishing dashboard.</h1><p className="muted">Signed in as {user.email}</p></div>
+        <div><span className="kicker">Authenticated workspace</span><h1>Publishing dashboard.</h1><p className="muted">Signed in as {user.email}</p><Link className="primary-link" href="/publisher">← Publisher portal</Link></div>
         <form action={signOutAdmin}><button type="submit">Sign out</button></form>
       </div>
 
