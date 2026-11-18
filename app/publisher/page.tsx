@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getAdminContext } from "@/lib/auth/admin";
 import { getPublisherOverview } from "@/lib/publisher/dashboard";
+import { signOutAdmin } from "../admin/login/actions";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Publisher Portal | ORBIT & ORIGIN" };
@@ -78,7 +79,7 @@ export default async function PublisherPortalPage({
           <h1>Publisher workspace.</h1>
           <p className="muted">Signed in as {context.user.email}</p>
         </div>
-        <Link className="primary-link" href="/admin/login">Account &amp; sign out ↗</Link>
+        <form action={signOutAdmin}><button type="submit">Sign out</button></form>
       </div>
 
       <section style={{ marginTop: 36 }}>
@@ -99,7 +100,7 @@ export default async function PublisherPortalPage({
         <div className="grid" style={{ marginTop: 18 }}>
           <article className="story-card"><h2>Create an edition</h2><p className="muted">Upload the issue PDF and cover, add publication details, then save a draft.</p><Link className="primary-link" href="/admin">Open issue manager ↗</Link></article>
           <article className="story-card"><h2>Write an article</h2><p className="muted">Create a distinct feature, select its department and associate it with its source issue.</p><Link className="primary-link" href="/admin/articles">Open Article Studio ↗</Link></article>
-          <article className="story-card"><h2>Publication calendar</h2><p className="muted">Retrieve scheduled and published records from the protected calendar API.</p><Link className="primary-link" href="/api/publisher/calendar?from=2026-01-01T00%3A00%3A00.000Z&amp;to=2027-01-01T00%3A00%3A00.000Z">Open calendar data API ↗</Link></article>
+          <article className="story-card"><h2>Publication calendar</h2><p className="muted">Retrieve scheduled and published records from the protected calendar API.</p><Link className="primary-link" href="/admin">Manage publication schedules ↗</Link></article>
           <article className="story-card"><h2>Reader preview</h2><p className="muted">Check the public-facing issue archive and individual article library.</p><div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}><Link href="/issues">Issue archive ↗</Link><Link href="/articles">Articles ↗</Link></div></article>
         </div>
       </section>
