@@ -4,8 +4,9 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Issue } from "@/lib/types";
 import { getAdminContext } from "@/lib/auth/admin";
 import { isPublishedStorageAsset } from "@/src/editorial/asset-url";
+import FounderIssueUploader from "@/components/founder-issue-uploader";
 import {
-  cancelIssueSchedule, createIssue, publishIssue, scheduleIssue, unpublishIssue, updateIssue,
+  cancelIssueSchedule, publishIssue, scheduleIssue, unpublishIssue, updateIssue,
 } from "@/app/admin/actions";
 import { signOutAdmin } from "@/app/admin/login/actions";
 
@@ -123,35 +124,7 @@ export default async function FounderWorkspacePage({
           <div><span className="kicker">01 / New edition</span><h2 id="upload-heading">Upload an issue.</h2></div>
           <p>Enter its bibliographic details, add the edition PDF and cover, then save it privately as a draft. Nothing becomes public until you publish it.</p>
         </div>
-        <div className="oo-founder-upload-layout">
-          <form className="oo-founder-upload-form" action={createIssue} encType="multipart/form-data">
-            <input type="hidden" name="return_to" value="/founder/portal"/>
-            <div className="oo-founder-form-grid">
-              <label className="form-field">Issue number<input name="issue_number" type="number" min="1" max="999999" defaultValue="3" required/></label>
-              <label className="form-field">Publication date<input name="publication_date" type="date" defaultValue="2026-11-21" required/></label>
-            </div>
-            <label className="form-field">Edition title<input name="title" type="text" minLength={3} maxLength={160} defaultValue="The Mapped Cosmos" required/></label>
-            <label className="form-field">Public description<textarea name="description" rows={4} minLength={10} maxLength={2000} defaultValue="Euclid opens a new window onto the invisible Universe. This edition explores Euclid's DR1-Foundation release, the cosmic web and gravitational-lensing candidates, alongside FLIP exoplanet imaging, ISRO's NVS-03 and NASA's ESCAPADE mission." required/></label>
-            <fieldset className="oo-founder-departments">
-              <legend>Departments represented</legend>
-              {Object.entries(departmentLabels).map(([value, label]) => <label key={value}><input type="checkbox" name="departments" value={value} defaultChecked/> {label}</label>)}
-            </fieldset>
-            <label className="form-field">Complete issue PDF <span className="oo-founder-field-hint">PDF · maximum 25 MB</span><input type="file" name="pdf" accept="application/pdf,.pdf" required/></label>
-            <label className="form-field">Cover image <span className="oo-founder-field-hint">JPEG, PNG or WebP · maximum 8 MB</span><input type="file" name="cover" accept="image/jpeg,image/png,image/webp" required/></label>
-            <div className="oo-founder-form-actions"><button type="submit">Upload and save as draft ↗</button><span>Drafts remain private until you publish.</span></div>
-          </form>
-          <aside className="oo-founder-upload-note">
-            <span className="kicker">READY FOR ISSUE 003</span>
-            <strong>The Mapped Cosmos</strong>
-            <p>The details are prefilled from the attached 10-page Issue 003 edition. Confirm them, select the PDF from your device and add its cover artwork.</p>
-            <dl>
-              <div><dt>Release date</dt><dd>21 November 2026</dd></div>
-              <div><dt>Departments</dt><dd>All three editorial departments</dd></div>
-              <div><dt>Upload state</dt><dd>Private draft until you publish</dd></div>
-            </dl>
-            <Link href="/issues" target="_blank">See the public archive ↗</Link>
-          </aside>
-        </div>
+        <FounderIssueUploader/>
       </section>
 
       <section className="oo-founder-section" aria-labelledby="editions-heading">
