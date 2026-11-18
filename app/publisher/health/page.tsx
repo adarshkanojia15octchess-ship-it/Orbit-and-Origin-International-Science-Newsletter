@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { redirect } from "next/navigation";
 import { getAdminContext } from "@/lib/auth/admin";
 
 export const dynamic = "force-dynamic";
@@ -20,16 +20,7 @@ function Check({ label, ok, detail }: { label: string; ok: boolean; detail: stri
 
 export default async function PublisherHealthPage() {
   const context = await getAdminContext();
-  if (!context) {
-    return (
-      <main className="page-shell">
-        <span className="kicker">ORBIT &amp; ORIGIN / SYSTEM HEALTH</span>
-        <h1>Administrator access required.</h1>
-        <p className="muted">Sign in with the authorised publisher account to view operational diagnostics.</p>
-        <Link className="primary-link" href="/admin/login">Sign in ↗</Link>
-      </main>
-    );
-  }
+  if (!context) redirect("/issues");
 
   const [issues, articles] = await Promise.all([
     context.supabase.from("issues").select("id", { count: "exact", head: true }),
@@ -70,7 +61,7 @@ export default async function PublisherHealthPage() {
         <p className="muted">The JSON diagnostics endpoint performs the same administrator check and returns machine-readable status for support and deployment verification.</p>
         <Link className="primary-link" href="/api/publisher/health">Open private health API ↗</Link>
       </section>
-      <p style={{ marginTop: 28 }}><Link href="/publisher">← Back to Publisher Portal</Link></p>
+      <p style={{ marginTop: 28 }}><Link href="/founder/portal">← Back to Founder Workspace</Link></p>
     </main>
   );
 }
