@@ -53,7 +53,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html lang="en">
       <body>
         <header className={"site-header" + (isReader ? " reader-mode-header" : "")}>
-          <Link className="wordmark" href="/">ORBIT <span>&amp;</span> ORIGIN</Link>
+          <Link className="wordmark" href={isReader ? "/issues" : "/"}>ORBIT <span>&amp;</span> ORIGIN</Link>
           <nav aria-label="Main navigation">
             {nav.map(([label, href]) => <Link key={href} href={href}>{label}</Link>)}
           </nav>
