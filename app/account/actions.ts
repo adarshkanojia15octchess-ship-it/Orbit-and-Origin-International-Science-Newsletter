@@ -17,7 +17,7 @@ export async function signInReader(formData: FormData) {
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) redirect("/account?error=invalid");
-  redirect("/account?welcome=1");
+  redirect("/issues");
 }
 
 export async function signUpReader(formData: FormData) {
@@ -28,7 +28,7 @@ export async function signUpReader(formData: FormData) {
   const emailRedirectTo = new URL("/auth/callback?mode=reader", siteUrl()).toString();
   const { data, error } = await supabase.auth.signUp({ email, password, options: { emailRedirectTo } });
   if (error) redirect("/account?error=signup");
-  if (data.session) redirect("/account?welcome=1");
+  if (data.session) redirect("/issues");
   redirect("/account?check-email=1");
 }
 
