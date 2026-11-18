@@ -1,6 +1,8 @@
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import type { Issue } from "@/lib/types";
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 type Props = { params: Promise<{ issue_number: string }> };
 
