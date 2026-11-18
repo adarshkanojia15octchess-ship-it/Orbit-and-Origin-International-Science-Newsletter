@@ -102,6 +102,7 @@ export default async function PublisherPortalPage({
           <article className="story-card"><h2>Write an article</h2><p className="muted">Create a distinct feature, select its department and associate it with its source issue.</p><Link className="primary-link" href="/admin/articles">Open Article Studio ↗</Link></article>
           <article className="story-card"><h2>Publication calendar</h2><p className="muted">Retrieve scheduled and published records from the protected calendar API.</p><Link className="primary-link" href="/admin">Manage publication schedules ↗</Link></article>
           <article className="story-card"><h2>Reader preview</h2><p className="muted">Check the public-facing issue archive and individual article library.</p><div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}><Link href="/issues">Issue archive ↗</Link><Link href="/articles">Articles ↗</Link></div></article>
+          <article className="story-card"><h2>System health</h2><p className="muted">Check administrator access, Supabase connectivity, required environment configuration and deployment metadata.</p><Link className="primary-link" href="/publisher/health">Run operational checks ↗</Link></article>
         </div>
       </section>
 
