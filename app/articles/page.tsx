@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import type { Article, ArticleDepartment } from "@/lib/types";
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export const metadata = { title: "Articles" };
 
