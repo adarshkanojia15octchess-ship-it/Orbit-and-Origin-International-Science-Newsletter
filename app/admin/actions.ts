@@ -457,8 +457,8 @@ export async function createIssueRecord(formData: FormData): Promise<{ ok: boole
   const coverPath = String(formData.get("cover_path") || "");
   const prefix = `issues/${issueNumber}/`;
   const uuidPart = "[0-9a-f-]{36}";
-  const pdfPattern = new RegExp(`^${prefix}${uuidPart}\\\\.pdf$`, "i");
-  const coverPattern = new RegExp(`^${prefix}${uuidPart}-cover\\\\.(jpg|png|webp)$`, "i");
+  const pdfPattern = new RegExp("^" + prefix + uuidPart + "\\.pdf$", "i");
+  const coverPattern = new RegExp("^" + prefix + uuidPart + "-cover\\.(jpg|png|webp)$", "i");
   if (!pdfPattern.test(pdfPath) || !coverPattern.test(coverPath)) {
     return { ok: false, message: "The uploaded file references are invalid. Please upload both files again." };
   }
