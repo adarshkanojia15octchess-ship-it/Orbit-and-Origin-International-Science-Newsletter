@@ -46,3 +46,29 @@ After deployment, open `/publisher`, choose secure sign-in, and use the authoris
 - The OAuth callback rejects users without the trusted admin claim or with an email that does not match `ADMIN_EMAIL`.
 - Unauthorised OAuth sessions are signed out.
 - Never commit a password, Google client secret, Supabase service-role key, or other credential.
+
+
+## Separate public reader and founder experiences
+
+- **Reader access:** `/account` supports email/password registration, email/password sign-in and Google sign-in. Published issues and stories remain readable without an account.
+- **Founder workspace:** `/founder/portal` opens the publisher dashboard and still requires BOTH the trusted `app_metadata.role = admin` claim and the exact `ADMIN_EMAIL` allow-list match.
+- Reader registration never assigns administrator metadata. The Google callback distinguishes `mode=reader` from `mode=admin`; default/admin callbacks remain restricted.
+- The existing Google provider must be enabled in Supabase. Keep provider credentials inside Supabase, never in repository code.
+
+### Stable links for newsletters and social posts
+
+Use these permanent application links rather than copying a versioned Supabase storage URL:
+
+- `https://orbit-and-origin-international-scie.vercel.app/latest` — redirects to the newest published issue reader.
+- `https://orbit-and-origin-international-scie.vercel.app/latest-issue.pdf` — redirects to the newest published PDF.
+- `https://orbit-and-origin-international-scie.vercel.app/issues` — full archive.
+
+Each published PDF is intentionally stored as an immutable, versioned object. An old direct storage URL continues to refer to that exact historical file. To make a newsletter link follow future editions, use one of the stable application URLs above. The latest routes do not cache their redirect decision.
+
+### Reader authentication setup
+
+1. In Supabase Authentication → Providers → Email, enable email/password authentication and configure email confirmation according to your publication policy.
+2. Keep Google enabled for the existing administrator flow; the same provider is used for reader accounts.
+3. In Supabase Authentication → URL Configuration, allow the production callback `https://orbit-and-origin-international-scie.vercel.app/auth/callback`.
+4. Confirm `NEXT_PUBLIC_SITE_URL` matches the production site in Vercel.
+5. Test with a non-administrator email address. It should return to `/account`, never to the founder workspace.
