@@ -308,3 +308,12 @@ button:disabled { opacity:.35; cursor:not-allowed; }
   .oo-planet-grid { grid-template-columns:1fr; }
   .oo-paper-card,.oo-observatory-event,.oo-planet-card { padding:20px; }
 }
+
+
+/* Additional Observatory datasets */
+.oo-subpanel-heading { margin:42px 0 18px; padding-top:30px; border-top:1px solid var(--oo-line); }
+.oo-earth-image-card { margin:18px 0 38px; border:1px solid var(--oo-line); background:#071321; }
+.oo-earth-image-card img { display:block; width:100%; height:auto; }
+.oo-earth-image-card p { margin:0; padding:13px 16px; color:var(--oo-muted); font-size:10px; letter-spacing:.04em; }
+.oo-earth-filters { grid-template-columns:repeat(2,minmax(0,1fr)); }
+@media(max-width:620px) { .oo-earth-filters { grid-template-columns:1fr; } }

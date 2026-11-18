@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { FormEvent, useEffect, useState } from "react";
 
-type Tab = "apod" | "solar" | "exoplanets" | "papers";
+type Tab = "apod" | "solar" | "exoplanets" | "papers" | "gaia" | "euclid" | "earth";
 type ApodData = {
   date: string; title: string; mediaType: string; explanation: string;
   imageUrl: string | null; alt: string; credit: string; pageUrl: string;
@@ -30,6 +30,10 @@ type CrossrefCandidate = {
 };
 type CrossrefResponse = { candidates: CrossrefCandidate[]; guidance: string };
 type ApiError = { error?: string };
+type CloseApproach = { designation: string; dateTime: string; distanceAu: number | null; minimumDistanceAu: number | null; relativeVelocityKmS: number | null; absoluteMagnitude: number | null; diameterKm: number | null };
+type GaiaStar = { sourceId: string; designation: string | null; raDeg: number | null; decDeg: number | null; parallaxMas: number | null; parallaxErrorMas: number | null; parallaxSignalToNoise: number | null; properMotionRaMasYr: number | null; properMotionDecMasYr: number | null; gMagnitude: number | null; distancePc: number | null };
+type EuclidObservation = { id: string; collection: string | null; productType: string | null; calibrationLevel: number | null; targetName: string | null; raDeg: number | null; decDeg: number | null; observationMjd: number | null; accessFormat: string | null };
+type EarthquakeEvent = { id: string; title: string | null; place: string | null; magnitude: number | null; magnitudeType: string | null; time: number | null; depthKm: number | null; longitude: number | null; latitude: number | null; felt: number | null; tsunami: boolean; significance: number | null; eventUrl: string };
 
 async function readApi<T>(url: string, signal?: AbortSignal): Promise<T> {
   const response = await fetch(url, { signal, headers: { Accept: "application/json" } });
@@ -63,6 +67,13 @@ export default function ObservatoryClient() {
   const [apod, setApod] = useState<ApodData | null>(null);
   const [solarEvents, setSolarEvents] = useState<SolarEvent[]>([]);
   const [solarPartial, setSolarPartial] = useState(false);
+  const [closeApproaches, setCloseApproaches] = useState<CloseApproach[]>([]);
+  const [gaiaStars, setGaiaStars] = useState<GaiaStar[]>([]);
+  const [euclidObservations, setEuclidObservations] = useState<EuclidObservation[]>([]);
+  const [earthquakes, setEarthquakes] = useState<EarthquakeEvent[]>([]);
+  const [earthquakeTotal, setEarthquakeTotal] = useState(0);
+  const [earthquakePeriod, setEarthquakePeriod] = useState("week");
+  const [earthquakeMagnitude, setEarthquakeMagnitude] = useState("4.5");
   const [planets, setPlanets] = useState<Planet[]>([]);
   const [planetQueryDraft, setPlanetQueryDraft] = useState("");
   const [planetMethodDraft, setPlanetMethodDraft] = useState("");
@@ -99,16 +110,23 @@ export default function ObservatoryClient() {
     const controller = new AbortController();
     setLoading(true);
     setError("");
-    readApi<{ events: SolarEvent[]; partial: boolean; retrievedAt: string }>("/api/science/solar?days=7", controller.signal)
-      .then((result) => {
-        setSolarEvents(result.events);
-        setSolarPartial(result.partial);
-        setRetrievedAt(result.retrievedAt);
-      })
-      .catch((reason: unknown) => {
-        if (!controller.signal.aborted) setError(reason instanceof Error ? reason.message : "NASA space-weather data is unavailable.");
-      })
-      .finally(() => { if (!controller.signal.aborted) setLoading(false); });
+    Promise.allSettled([
+      readApi<{ events: SolarEvent[]; partial: boolean; retrievedAt: string }>("/api/science/solar?days=7", controller.signal),
+      readApi<{ approaches: CloseApproach[]; retrievedAt: string }>("/api/science/approaches", controller.signal),
+    ]).then(([solarResult, approachResult]) => {
+      if (solarResult.status === "rejected" && approachResult.status === "rejected") throw solarResult.reason;
+      setSolarEvents(solarResult.status === "fulfilled" ? solarResult.value.events : []);
+      setCloseApproaches(approachResult.status === "fulfilled" ? approachResult.value.approaches : []);
+      setSolarPartial(solarResult.status === "rejected" || approachResult.status === "rejected" ||
+        (solarResult.status === "fulfilled" && solarResult.value.partial));
+      const timestamps = [
+        solarResult.status === "fulfilled" ? solarResult.value.retrievedAt : "",
+        approachResult.status === "fulfilled" ? approachResult.value.retrievedAt : "",
+      ].filter(Boolean).sort();
+      if (timestamps.length) setRetrievedAt(timestamps[timestamps.length - 1]);
+    }).catch((reason: unknown) => {
+      if (!controller.signal.aborted) setError(reason instanceof Error ? reason.message : "Space-weather and close-approach data are unavailable.");
+    }).finally(() => { if (!controller.signal.aborted) setLoading(false); });
     return () => controller.abort();
   }, [tab]);
 
@@ -151,6 +169,40 @@ export default function ObservatoryClient() {
     return () => controller.abort();
   }, [tab, paperQuery, paperCategory]);
 
+  useEffect(() => {
+    if (tab !== "gaia") return;
+    const controller = new AbortController();
+    setLoading(true); setError("");
+    readApi<{ stars: GaiaStar[]; retrievedAt: string }>("/api/science/gaia", controller.signal)
+      .then((result) => { setGaiaStars(result.stars); setRetrievedAt(result.retrievedAt); })
+      .catch((reason: unknown) => { if (!controller.signal.aborted) setError(reason instanceof Error ? reason.message : "The Gaia Archive is unavailable."); })
+      .finally(() => { if (!controller.signal.aborted) setLoading(false); });
+    return () => controller.abort();
+  }, [tab]);
+
+  useEffect(() => {
+    if (tab !== "euclid") return;
+    const controller = new AbortController();
+    setLoading(true); setError("");
+    readApi<{ observations: EuclidObservation[]; retrievedAt: string }>("/api/science/euclid", controller.signal)
+      .then((result) => { setEuclidObservations(result.observations); setRetrievedAt(result.retrievedAt); })
+      .catch((reason: unknown) => { if (!controller.signal.aborted) setError(reason instanceof Error ? reason.message : "The Euclid Science Archive is unavailable."); })
+      .finally(() => { if (!controller.signal.aborted) setLoading(false); });
+    return () => controller.abort();
+  }, [tab]);
+
+  useEffect(() => {
+    if (tab !== "earth") return;
+    const controller = new AbortController();
+    setLoading(true); setError("");
+    const params = new URLSearchParams({ period: earthquakePeriod, magnitude: earthquakeMagnitude });
+    readApi<{ events: EarthquakeEvent[]; total: number; retrievedAt: string }>("/api/science/earthquakes?" + params.toString(), controller.signal)
+      .then((result) => { setEarthquakes(result.events); setEarthquakeTotal(result.total); setRetrievedAt(result.retrievedAt); })
+      .catch((reason: unknown) => { if (!controller.signal.aborted) setError(reason instanceof Error ? reason.message : "The USGS earthquake feed is unavailable."); })
+      .finally(() => { if (!controller.signal.aborted) setLoading(false); });
+    return () => controller.abort();
+  }, [tab, earthquakePeriod, earthquakeMagnitude]);
+
   function submitPlanetSearch(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setPlanetQuery(planetQueryDraft.trim());
@@ -191,6 +243,9 @@ export default function ObservatoryClient() {
         <button type="button" role="tab" aria-selected={tab === "solar"} className={tab === "solar" ? "is-active" : ""} onClick={() => setTab("solar")}>Solar activity</button>
         <button type="button" role="tab" aria-selected={tab === "exoplanets"} className={tab === "exoplanets" ? "is-active" : ""} onClick={() => setTab("exoplanets")}>Exoplanet Atlas</button>
         <button type="button" role="tab" aria-selected={tab === "papers"} className={tab === "papers" ? "is-active" : ""} onClick={() => setTab("papers")}>Research Radar</button>
+        <button type="button" role="tab" aria-selected={tab === "gaia"} className={tab === "gaia" ? "is-active" : ""} onClick={() => setTab("gaia")}>Gaia · Stars</button>
+        <button type="button" role="tab" aria-selected={tab === "euclid"} className={tab === "euclid" ? "is-active" : ""} onClick={() => setTab("euclid")}>Euclid Deep Sky</button>
+        <button type="button" role="tab" aria-selected={tab === "earth"} className={tab === "earth" ? "is-active" : ""} onClick={() => setTab("earth")}>Earth Monitor</button>
       </div>
 
       {loading && <p className="oo-observatory-status" role="status">Retrieving scientific data from the original provider…</p>}
@@ -242,6 +297,25 @@ export default function ObservatoryClient() {
             ))}
           </div>
           <p className="oo-observatory-note">DONKI records include observations, analysis and model-linked event information. This list is not a forecast or an alert service.</p>
+          <div className="oo-observatory-panel-heading oo-subpanel-heading">
+            <div><span className="oo-eyebrow">NASA/JPL · NEXT 60 DAYS</span><h2>Asteroids approaching Earth.</h2></div>
+            <span className="oo-observatory-source-mark">CLOSE APPROACHES</span>
+          </div>
+          {!loading && !closeApproaches.length && !error && <p className="oo-observatory-note">No records met this panel’s current date and distance filters. Open JPL’s source page to explore other query ranges.</p>}
+          <div className="oo-observatory-event-list">
+            {closeApproaches.map((approach) => (
+              <article className="oo-observatory-event" key={approach.designation + approach.dateTime}>
+                <div className="oo-observatory-event-top"><span>Earth close approach</span><time>{approach.dateTime}</time></div>
+                <h3>{approach.designation}</h3>
+                <p>Nominal distance · {numberLabel(approach.distanceAu, " au")}<br />
+                  Relative velocity · {numberLabel(approach.relativeVelocityKmS, " km/s")}<br />
+                  Estimated diameter · {numberLabel(approach.diameterKm, " km")}
+                </p>
+              </article>
+            ))}
+          </div>
+          <p className="oo-observatory-note">This panel is limited to records within 0.05 au over the next 60 days. A close approach is not a prediction of impact; uncertainty bounds and orbital solutions matter.</p>
+          <a className="oo-observatory-text-link" href="https://ssd-api.jpl.nasa.gov/doc/cad.html" target="_blank" rel="noreferrer">Read JPL’s API documentation ↗</a>
         </section>
       )}
 
@@ -322,6 +396,99 @@ export default function ObservatoryClient() {
               </article>
             ))}
           </div>
+        </section>
+      )}
+
+      {tab === "gaia" && (
+        <section className="oo-observatory-panel" role="tabpanel" aria-labelledby="oo-gaia-title">
+          <div className="oo-observatory-panel-heading">
+            <div><span className="oo-eyebrow">ESA GAIA · DATA RELEASE 3</span><h2 id="oo-gaia-title">A census of nearby stars.</h2></div>
+            <span className="oo-observatory-source-mark">ASTROMETRY</span>
+          </div>
+          <p className="oo-observatory-results-count">A live TAP query selects positive parallaxes above 50 mas with parallax signal-to-noise of at least 10. {gaiaStars.length} stellar records returned.</p>
+          <div className="oo-planet-grid">
+            {gaiaStars.map((star) => (
+              <article className="oo-planet-card" key={star.sourceId}>
+                <span className="oo-eyebrow">GAIA DR3 · {star.sourceId}</span>
+                <h3>{star.designation || "Gaia source"}</h3>
+                <p className="oo-planet-host">ICRS · {numberLabel(star.raDeg, "°")} RA · {numberLabel(star.decDeg, "°")} Dec</p>
+                <dl>
+                  <div><dt>Parallax</dt><dd>{numberLabel(star.parallaxMas, " mas")}</dd></div>
+                  <div><dt>Inverse-parallax distance</dt><dd>{numberLabel(star.distancePc, " pc")}</dd></div>
+                  <div><dt>G magnitude</dt><dd>{numberLabel(star.gMagnitude)}</dd></div>
+                  <div><dt>Parallax S/N</dt><dd>{numberLabel(star.parallaxSignalToNoise)}</dd></div>
+                  <div><dt>Proper motion RA</dt><dd>{numberLabel(star.properMotionRaMasYr, " mas/yr")}</dd></div>
+                  <div><dt>Proper motion Dec</dt><dd>{numberLabel(star.properMotionDecMasYr, " mas/yr")}</dd></div>
+                </dl>
+              </article>
+            ))}
+          </div>
+          <p className="oo-observatory-note">Distances are the simple inverse of positive parallax, not Bayesian distance estimates. Gaia astrometry has uncertainties and selection effects; this is an educational view, not a precision distance catalogue.</p>
+          <a className="oo-observatory-text-link" href="https://gea.esac.esa.int/archive/" target="_blank" rel="noreferrer">Open the ESA Gaia Archive ↗</a>
+        </section>
+      )}
+
+      {tab === "euclid" && (
+        <section className="oo-observatory-panel" role="tabpanel" aria-labelledby="oo-euclid-title">
+          <div className="oo-observatory-panel-heading">
+            <div><span className="oo-eyebrow">ESA EUCLID · PUBLIC SCIENCE ARCHIVE</span><h2 id="oo-euclid-title">Surveying the dark Universe.</h2></div>
+            <span className="oo-observatory-source-mark">DEEP SKY</span>
+          </div>
+          <p className="oo-observatory-results-count">{euclidObservations.length} public observation-metadata records returned from the archive’s standard ObsCore table.</p>
+          <div className="oo-observatory-event-list">
+            {euclidObservations.map((observation) => (
+              <article className="oo-observatory-event" key={observation.id}>
+                <div className="oo-observatory-event-top"><span>{observation.productType || "Data product"}</span><time>Calibration level {observation.calibrationLevel ?? "not reported"}</time></div>
+                <h3>{observation.targetName || observation.id}</h3>
+                <p>Observation ID · {observation.id}<br />
+                  Collection · {observation.collection || "Not supplied"}<br />
+                  Sky position · {numberLabel(observation.raDeg, "°")} RA · {numberLabel(observation.decDeg, "°")} Dec<br />
+                  Time (MJD) · {numberLabel(observation.observationMjd)}<br />
+                  Format · {observation.accessFormat || "Not supplied"}
+                </p>
+              </article>
+            ))}
+          </div>
+          <p className="oo-observatory-note">This is archive metadata, not an image or a scientific result. Euclid Q1 is public; large data products and detailed catalogue queries should be opened in the original archive.</p>
+          <a className="oo-observatory-text-link" href="https://eas.esac.esa.int/sas/" target="_blank" rel="noreferrer">Explore the ESA Euclid Science Archive ↗</a>
+        </section>
+      )}
+
+      {tab === "earth" && (
+        <section className="oo-observatory-panel" role="tabpanel" aria-labelledby="oo-earth-title">
+          <div className="oo-observatory-panel-heading">
+            <div><span className="oo-eyebrow">NASA GIBS + USGS · EARTH OBSERVATIONS</span><h2 id="oo-earth-title">Our changing planet.</h2></div>
+            <span className="oo-observatory-source-mark">EARTH SYSTEM</span>
+          </div>
+          <div className="oo-earth-image-card">
+            <Image src="/api/science/earth-imagery" alt="Global true-colour satellite imagery from NASA MODIS Terra, served by NASA GIBS." width={1536} height={768} sizes="(max-width: 900px) 100vw, 80vw" />
+            <p>NASA Global Imagery Browse Services · MODIS Terra corrected reflectance, true colour. The latest available composite may lag the current date.</p>
+          </div>
+          <div className="oo-observatory-panel-heading oo-subpanel-heading">
+            <div><span className="oo-eyebrow">USGS · COMCAT GEOJSON FEED</span><h2>Recent earthquakes.</h2></div>
+            <span className="oo-observatory-source-mark">SEISMIC EVENTS</span>
+          </div>
+          <div className="oo-observatory-filters oo-earth-filters">
+            <label>Time window<select value={earthquakePeriod} onChange={(event) => setEarthquakePeriod(event.target.value)}><option value="hour">Past hour</option><option value="day">Past day</option><option value="week">Past 7 days</option></select></label>
+            <label>Magnitude feed<select value={earthquakeMagnitude} onChange={(event) => setEarthquakeMagnitude(event.target.value)}><option value="significant">Significant</option><option value="4.5">M4.5+</option><option value="2.5">M2.5+</option><option value="1.0">M1.0+</option><option value="all">All reported events</option></select></label>
+          </div>
+          <p className="oo-observatory-results-count">Showing {earthquakes.length} records from a feed containing {earthquakeTotal.toLocaleString()} matching events.</p>
+          <div className="oo-observatory-event-list">
+            {earthquakes.map((event) => (
+              <article className="oo-observatory-event" key={event.id}>
+                <div className="oo-observatory-event-top"><span>{event.magnitudeType || "Magnitude"} · {numberLabel(event.magnitude)}</span><time>{event.time ? new Date(event.time).toLocaleString() : "Time unavailable"}</time></div>
+                <h3>{event.place || event.title || "Earthquake event"}</h3>
+                <p>Depth · {numberLabel(event.depthKm, " km")}<br />
+                  Coordinates · {numberLabel(event.latitude, "°")} lat · {numberLabel(event.longitude, "°")} lon<br />
+                  {event.felt !== null ? "Felt reports · " + event.felt : "Felt reports · Not supplied"}
+                  {event.tsunami ? " · Tsunami flag in source record" : ""}
+                </p>
+                <a className="oo-observatory-text-link" href={event.eventUrl} target="_blank" rel="noreferrer">USGS event details ↗</a>
+              </article>
+            ))}
+          </div>
+          <p className="oo-observatory-note">USGS event parameters may be revised as analysis continues. This global feed is not a local alert or personal safety assessment.</p>
+          <a className="oo-observatory-text-link" href="https://earthquake.usgs.gov/earthquakes/feed/v1.0/geojson.php" target="_blank" rel="noreferrer">USGS feed documentation ↗</a>
         </section>
       )}
 

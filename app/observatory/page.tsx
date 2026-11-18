@@ -13,8 +13,8 @@ export default function ObservatoryPage() {
         <span className="oo-eyebrow">ORBIT &amp; ORIGIN · SCIENCE OBSERVATORY</span>
         <h1>Look deeper.<br /><em>Follow the evidence.</em></h1>
         <p>
-          Explore scientific observations and research records from NASA, the NASA Exoplanet Archive,
-          arXiv and Crossref — with the original sources kept in view.
+          Explore observations and research records from NASA, ESA Gaia and Euclid, JPL, USGS,
+          the NASA Exoplanet Archive, arXiv and Crossref — with the original sources kept in view.
         </p>
         <div className="oo-observatory-principle">
           <span>OPEN TO CURIOSITY.</span>
