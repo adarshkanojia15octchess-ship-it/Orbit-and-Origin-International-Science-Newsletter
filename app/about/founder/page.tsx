@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
+import { keepReaderInIssueLibrary } from "@/lib/auth/reader-access";
 
 export const metadata: Metadata = {
   title: "The Founder",
@@ -8,7 +9,8 @@ export const metadata: Metadata = {
     "Meet Adarsh Kanojia, Founder and Editor-in-Chief of ORBIT & ORIGIN, and explore selected scientific writing.",
 };
 
-export default function FounderPage() {
+export default async function FounderPage() {
+  await keepReaderInIssueLibrary();
   return (
     <main className="founder-page">
       <header className="founder-intro">
