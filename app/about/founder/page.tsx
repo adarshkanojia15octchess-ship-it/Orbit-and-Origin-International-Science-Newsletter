@@ -21,10 +21,10 @@ export default function FounderPage() {
         </div>
         <figure className="founder-portrait">
           <Image
-            src="/images/founder-portrait.webp"
-            alt="Black-and-white portrait of Adarsh Kanojia in a dark suit and tie against a plain black background"
-            width={1254}
-            height={1254}
+            src="/images/founder-portrait.png"
+            alt="Portrait of Adarsh Kanojia in a dark suit and tie, with a red-and-blue cosmic nebula background"
+            width={1111}
+            height={1415}
             priority
             sizes="(max-width: 760px) 78vw, 360px"
           />
