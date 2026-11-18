@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import type { Issue } from "@/lib/types";
 import { isPublishedStorageAsset } from "@/src/editorial/asset-url";
+import ReaderRoadmap from "@/components/reader-roadmap";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -50,8 +51,11 @@ export default async function Home() {
       <section className="hero">
         <span className="kicker">An independent science &amp; astronomy publication</span>
         <h1>Exploring the Universe.<br /><em>Understanding Our Place.</em></h1>
-        <p>Scientific discoveries, cosmic perspectives and the ideas shaping tomorrow — explored with curiosity and evidence.</p>
-        <Link className="primary-link" href="/issues">Explore the publication ↗</Link>
+        <p>Read thoughtful science editions, explore the stories behind them, and follow the discoveries reshaping how we understand our place in the Universe.</p>
+        <div className="hero-actions">
+          <Link className="primary-link" href="/latest">Read the latest issue ↗</Link>
+          <Link className="secondary-link" href="/issues">Browse the archive</Link>
+        </div>
       </section>
 
       <section className="lead-issue" aria-labelledby="lead-issue-title">
@@ -112,6 +116,8 @@ export default async function Home() {
           <article className="story-card"><span className="kicker">03 / Perspective</span><h3>The Universal Record</h3><p>Research announcements, scientific milestones and the record of discovery.</p></article>
         </div>
       </section>
+
+      <ReaderRoadmap />
 
       <section className="newsletter-band">
         <div><span className="kicker">The ORBIT &amp; ORIGIN dispatch</span><h2>Stay curious. Look further.</h2><p>Receive new editions and carefully selected scientific stories.</p></div>
