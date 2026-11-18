@@ -8,30 +8,39 @@ export const metadata = {
   description: "An independent science and astronomy publication. Open to curiosity. Committed to evidence.",
 };
 
+function formatPublicationDate(value: string) {
+  const [year, month, day] = value.split("-").map(Number);
+  return new Date(Date.UTC(year, month - 1, day)).toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC",
+  });
+}
+
 export default async function Home() {
-  let issue002: Issue | null = null;
-  let issue001: Issue | null = null;
+  let latestIssue: Issue | null = null;
   try {
     const db = await createClient();
     const { data, error } = await db
       .from("issues")
       .select("*")
-      .eq("issue_number", 2)
       .eq("status", "published")
+      .order("publication_date", { ascending: false })
+      .order("issue_number", { ascending: false })
+      .limit(1)
       .maybeSingle();
     if (error) throw error;
-    issue002 = data as Issue | null;
-    const inaugural = await db.from("issues").select("*").eq("issue_number", 1).eq("status", "published").maybeSingle();
-    if (inaugural.error) throw inaugural.error;
-    issue001 = inaugural.data as Issue | null;
+    latestIssue = data as Issue | null;
   } catch {
-    // Keep the editorial lead readable if the publication database is unavailable.
+    // Keep the rest of the homepage available if the publication database is unavailable.
   }
 
   const projectUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-  const cover = issue002?.cover_image_url && isPublishedStorageAsset(issue002.cover_image_url, projectUrl)
-    ? issue002.cover_image_url
+  const cover = latestIssue?.cover_image_url && isPublishedStorageAsset(latestIssue.cover_image_url, projectUrl)
+    ? latestIssue.cover_image_url
     : null;
+  const issueLabel = latestIssue ? String(latestIssue.issue_number).padStart(3, "0") : null;
 
   return (
     <>
@@ -44,32 +53,45 @@ export default async function Home() {
 
       <section className="lead-issue" aria-labelledby="lead-issue-title">
         <div className="lead-issue-copy">
-          <span className="kicker">The lead editorial · Issue 002</span>
-          <p className="lead-issue-date">14 November 2026</p>
-          <h2 id="lead-issue-title">The Hidden Signal</h2>
-          <p className="lead-issue-deck">Across exoplanetary astronomy, climate dynamics and microbiology, precise methods reveal quiet physical signals amid ambient noise — without overstating what the evidence proves.</p>
-          {issue002 ? (
-            <Link className="primary-link" href={"/reader/" + issue002.id}>Read Issue 002 ↗</Link>
+          <span className="kicker">{latestIssue ? `The latest edition · Issue ${issueLabel}` : "The ORBIT & ORIGIN library"}</span>
+          {latestIssue ? (
+            <>
+              <p className="lead-issue-date">{formatPublicationDate(latestIssue.publication_date)}</p>
+              <h2 id="lead-issue-title">{latestIssue.title}</h2>
+              <p className="lead-issue-deck">{latestIssue.description}</p>
+              <Link className="primary-link" href={"/reader/" + latestIssue.id}>Discover Issue {issueLabel} ↗</Link>
+              <p className="lead-issue-inaugural">Explore every published edition in the <Link href="/issues">ORBIT &amp; ORIGIN archive ↗</Link>.</p>
+            </>
           ) : (
             <div className="lead-issue-status" role="status">
-              <span>Upcoming edition</span>
-              <strong>Publication date: 14 November 2026</strong>
+              <span>Our editorial library</span>
+              <strong>The next discovery starts here.</strong>
               <Link href="/issues">Browse the issue archive ↗</Link>
             </div>
           )}
-          <p className="lead-issue-inaugural">The inaugural edition, {issue001 ? <Link href={"/reader/" + issue001.id}>Reading the Traces · Issue 001</Link> : <Link href="/issues">Reading the Traces · Issue 001</Link>}, belongs in the publication archive.</p>
         </div>
         <div
           className={"lead-issue-art" + (cover ? " has-cover" : "")}
           style={cover ? { backgroundImage: "linear-gradient(0deg,rgba(10,25,43,.12),rgba(10,25,43,.02)),url(" + JSON.stringify(cover) + ")" } : undefined}
           role="img"
-          aria-label={cover ? "Cover artwork for ORBIT & ORIGIN Issue 002, The Hidden Signal" : "Typographic editorial artwork for Issue 002, The Hidden Signal"}
+          aria-label={cover
+            ? `Cover artwork for ORBIT & ORIGIN Issue ${issueLabel}, ${latestIssue?.title}`
+            : latestIssue
+              ? `Typographic editorial artwork for Issue ${issueLabel}, ${latestIssue.title}`
+              : "ORBIT & ORIGIN editorial artwork"}
         >
-          {!cover && (
+          {!cover && latestIssue && (
             <>
               <span className="lead-art-masthead">ORBIT <i>&amp;</i> ORIGIN</span>
-              <span className="lead-art-number">ISSUE 002</span>
-              <strong>THE<br />HIDDEN<br /><em>SIGNAL</em></strong>
+              <span className="lead-art-number">ISSUE {issueLabel}</span>
+              <strong>{latestIssue.title}</strong>
+              <span className="lead-art-foot">OPEN TO CURIOSITY · COMMITTED TO EVIDENCE</span>
+            </>
+          )}
+          {!cover && !latestIssue && (
+            <>
+              <span className="lead-art-masthead">ORBIT <i>&amp;</i> ORIGIN</span>
+              <strong>THE<br />UNIVERSE<br /><em>AWAITS</em></strong>
               <span className="lead-art-foot">OPEN TO CURIOSITY · COMMITTED TO EVIDENCE</span>
             </>
           )}
