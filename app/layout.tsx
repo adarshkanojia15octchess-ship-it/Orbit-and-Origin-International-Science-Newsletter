@@ -32,7 +32,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <nav aria-label="Main navigation">
             {nav.map(([label, href]) => <Link key={href} href={href}>{label}</Link>)}
           </nav>
-          <Link className="subscribe-link" href="/subscribe">Subscribe ↗</Link>
+          <div className="header-actions"><Link className="reader-link" href="/account">Reader sign in</Link><Link className="subscribe-link" href="/subscribe">Subscribe ↗</Link></div>
         </header>
         <main>{children}</main>
         <footer className="site-footer">
@@ -49,7 +49,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Link href="/privacy">Privacy</Link>
             <Link href="/contact">Contact</Link>
             <Link href="/subscribe">Subscribe</Link>
-            <Link href="/publisher">Publisher Portal</Link>
+            <Link href="/founder/portal">Founder workspace</Link>
+            <Link href="/account">Reader sign in</Link>
           </div>
           <small>© 2026 Adarsh Kanojia. All rights reserved.<span>Independent science publishing. Accuracy before sensationalism.</span></small>
         </footer>

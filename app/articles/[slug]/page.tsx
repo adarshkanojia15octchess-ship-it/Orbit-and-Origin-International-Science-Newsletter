@@ -2,6 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import type { Article, ArticleDepartment } from "@/lib/types";
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 type Props = { params: Promise<{ slug: string }> };
 

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import ObservatoryClient from "./observatory-client";
+import CosmicNeighborhood from "./cosmic-neighborhood";
 
 export const metadata: Metadata = {
   title: "Science Observatory",
@@ -22,6 +23,7 @@ export default function ObservatoryPage() {
         </div>
       </header>
       <ObservatoryClient />
+      <CosmicNeighborhood />
     </div>
   );
 }

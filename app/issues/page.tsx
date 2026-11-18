@@ -2,6 +2,8 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import type { Issue } from "@/lib/types";
 import { isPublishedStorageAsset } from "@/src/editorial/asset-url";
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export const metadata = { title: "Issue Archive", description: "Browse published editions of ORBIT & ORIGIN." };
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;

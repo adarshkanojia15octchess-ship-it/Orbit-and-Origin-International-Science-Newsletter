@@ -4,6 +4,8 @@ import { createClient } from "@/lib/supabase/server";
 import type { Article, Issue } from "@/lib/types";
 import { isPublishedStorageAsset } from "@/src/editorial/asset-url";
 import { PdfReader } from "@/src/editorial/pdf-reader";
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 type Props = { params: Promise<{ issueId: string }> };
 export const metadata = { title: "Edition reader", description: "Read a published ORBIT & ORIGIN edition." };

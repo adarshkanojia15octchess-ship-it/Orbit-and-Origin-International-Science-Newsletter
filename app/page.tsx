@@ -3,6 +3,9 @@ import { createClient } from "@/lib/supabase/server";
 import type { Issue } from "@/lib/types";
 import { isPublishedStorageAsset } from "@/src/editorial/asset-url";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export const metadata = {
   title: "ORBIT & ORIGIN — Exploring the Universe",
   description: "An independent science and astronomy publication. Open to curiosity. Committed to evidence.",
@@ -59,7 +62,7 @@ export default async function Home() {
               <p className="lead-issue-date">{formatPublicationDate(latestIssue.publication_date)}</p>
               <h2 id="lead-issue-title">{latestIssue.title}</h2>
               <p className="lead-issue-deck">{latestIssue.description}</p>
-              <Link className="primary-link" href={"/reader/" + latestIssue.id}>Discover Issue {issueLabel} ↗</Link>
+              <Link className="primary-link" href="/latest">Discover Issue {issueLabel} ↗</Link>
               <p className="lead-issue-inaugural">Explore every published edition in the <Link href="/issues">ORBIT &amp; ORIGIN archive ↗</Link>.</p>
             </>
           ) : (
