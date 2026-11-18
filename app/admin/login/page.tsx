@@ -10,7 +10,10 @@ export default async function AdminLoginPage({ searchParams }: { searchParams: P
       <span className="kicker">Founder-only workspace / Restricted access</span>
       <h1>Founder workspace.</h1>
       <p className="muted">Sign in with the single authorised founder account to manage editions, articles and publication settings.</p>
-      {error && <p role="alert" className="muted">{error === "configuration" ? "Administrator sign-in is not fully configured yet." : "Sign-in failed or this account is not authorised. Check the account and provider configuration."}</p>}
+      {error && <p role="alert" className="muted">{error === "configuration" ? "Administrator sign-in is not configured. The production deployment needs ADMIN_EMAIL. Google sign-in also requires the Google provider and production callback URL in Supabase Auth." :
+         error === "unauthorised" ? "This account is not authorised. In Supabase Auth, the configured founder account must have the trusted app_metadata claim role = admin and its email must exactly match ADMIN_EMAIL." :
+         error === "oauth" ? "Google sign-in could not be completed. Confirm the Google provider is enabled in Supabase Auth and the production callback URL is allowed." :
+         "Sign-in failed. Check the administrator email and password, or use Google with the authorised founder account."}</p>}
       <form action={signInWithGoogle} style={{ marginTop: 32 }}>
         <button type="submit">Continue with Google</button>
       </form>
