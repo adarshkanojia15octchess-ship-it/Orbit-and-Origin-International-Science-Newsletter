@@ -17,7 +17,7 @@ export async function signInAdmin(formData: FormData) {
     await supabase.auth.signOut();
     redirect("/admin/login?error=unauthorised");
   }
-  redirect("/publisher");
+  redirect("/founder/portal");
 }
 
 export async function signInWithGoogle() {
@@ -28,7 +28,7 @@ export async function signInWithGoogle() {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: new URL("/auth/callback", siteUrl).toString(),
+      redirectTo: new URL("/auth/callback?mode=admin", siteUrl).toString(),
       queryParams: { prompt: "select_account" },
     },
   });
@@ -39,5 +39,5 @@ export async function signInWithGoogle() {
 export async function signOutAdmin() {
   const supabase = await createClient();
   await supabase.auth.signOut();
-  redirect("/publisher");
+  redirect("/founder/portal");
 }
