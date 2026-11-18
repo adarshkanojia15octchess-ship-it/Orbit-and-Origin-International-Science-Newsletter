@@ -21,37 +21,74 @@ jobs:
   smoke:
     name: Check public production routes
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 15
     env:
       TARGET_URL: ${{ inputs.target_url || vars.PRODUCTION_URL || 'https://orbit-and-origin-international-scie.vercel.app' }}
     steps:
       - name: Validate target URL
         run: |
           node -e "const u = new URL(process.env.TARGET_URL); if (u.protocol !== 'https:') process.exit(1); console.log('Checking', u.origin)"
-      - name: Wait for deployment and verify public routes
+      - name: Wait for the new deployment and verify public routes
         shell: bash
         run: |
           set -euo pipefail
+
+          check_status() {
+            local expected="$1"
+            local path="$2"
+            local attempt=1
+            local code="000"
+
+            while (( attempt <= 12 )); do
+              code="$(curl --silent --show-error --location --connect-timeout 8 --max-time 15 --output /tmp/smoke-body --write-out '%{http_code}' "${TARGET_URL%/}$path" 2>/tmp/smoke-curl-error || true)"
+              if [[ "$code" == "$expected" ]]; then
+                echo "PASS $path (HTTP $code)"
+                return 0
+              fi
+
+              echo "Attempt $attempt/12: $path returned HTTP ${code:-000}; expected $expected. Waiting 5 seconds for the deployment/alias to become ready."
+              if (( attempt < 12 )); then sleep 5; fi
+              ((attempt += 1))
+            done
+
+            echo "::error::${TARGET_URL%/}$path did not reach HTTP $expected after 12 attempts (last: ${code:-000})."
+            if [[ -s /tmp/smoke-curl-error ]]; then cat /tmp/smoke-curl-error; fi
+            if [[ -s /tmp/smoke-body ]]; then head -c 1200 /tmp/smoke-body; fi
+            return 1
+          }
+
           for path in / /publisher /issues /articles; do
-            echo "Checking $path"
-            code="$(curl --silent --show-error --location --retry 12 --retry-all-errors --retry-delay 10 --max-time 25 --output /tmp/route-body --write-out '%{http_code}' "${TARGET_URL%/}$path")"
-            if [[ "$code" != "200" ]]; then
-              echo "::error::${TARGET_URL%/}$path returned HTTP $code"
-              head -c 1200 /tmp/route-body || true
-              exit 1
-            fi
-            echo "PASS $path (HTTP $code)"
+            check_status 200 "$path"
           done
-      - name: Confirm private API rejects anonymous requests
+
+      - name: Confirm publisher APIs reject anonymous requests after deployment
         shell: bash
         run: |
           set -euo pipefail
+
+          check_status() {
+            local path="$1"
+            local attempt=1
+            local code="000"
+
+            while (( attempt <= 12 )); do
+              code="$(curl --silent --show-error --location --connect-timeout 8 --max-time 15 --output /tmp/api-body --write-out '%{http_code}' "${TARGET_URL%/}$path" 2>/tmp/api-curl-error || true)"
+              if [[ "$code" == "401" ]]; then
+                echo "PASS $path rejects anonymous access (HTTP 401)"
+                return 0
+              fi
+
+              echo "Attempt $attempt/12: anonymous $path returned HTTP ${code:-000}; expected 401. Waiting 5 seconds for the production alias to finish updating."
+              if (( attempt < 12 )); then sleep 5; fi
+              ((attempt += 1))
+            done
+
+            echo "::error::Anonymous $path did not return HTTP 401 after 12 attempts (last: ${code:-000})."
+            if [[ -s /tmp/api-curl-error ]]; then cat /tmp/api-curl-error; fi
+            if [[ -s /tmp/api-body ]]; then head -c 1200 /tmp/api-body; fi
+            return 1
+          }
+
           for path in /api/publisher/overview /api/publisher/health; do
-            code="$(curl --silent --show-error --location --max-time 25 --output /tmp/api-body --write-out '%{http_code}' "${TARGET_URL%/}$path")"
-            if [[ "$code" != "401" ]]; then
-              echo "::error::Unauthenticated $path returned HTTP $code; expected 401"
-              head -c 1200 /tmp/api-body || true
-              exit 1
-            fi
-            echo "PASS $path rejects anonymous access (HTTP 401)"
+            check_status "$path"
           done
