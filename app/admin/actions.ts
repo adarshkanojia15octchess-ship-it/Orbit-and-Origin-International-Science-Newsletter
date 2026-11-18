@@ -230,7 +230,7 @@ const issueEditSchema = z.object({
   issue_id: z.string().uuid(),
   title: z.string().trim().min(3).max(160),
   description: z.string().trim().min(10).max(2000),
-  publication_date: z.string().regex(/^\\d{4}-\\d{2}-\\d{2}$/),
+  publication_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
 });
 
 export async function updateIssue(formData: FormData) {
