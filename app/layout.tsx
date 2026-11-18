@@ -67,7 +67,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         {children}
         <footer className={"site-footer" + (isReader ? " reader-mode-footer" : "")}>
           <div>
-            <Link className="wordmark" href="/">ORBIT <span>&amp;</span> ORIGIN</Link>
+            <Link className="wordmark" href={isReader ? "/issues" : "/"}>ORBIT <span>&amp;</span> ORIGIN</Link>
             <p>Exploring the Universe, Understanding Our Place.</p>
             {!isReader && <p className="footer-contact"><a href={"mailto:" + contactEmail}>{contactEmail}</a></p>}
           </div>
