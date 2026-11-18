@@ -1,6 +1,6 @@
 # Publisher portal and Google sign-in setup
 
-The unified publishing entry point is `/publisher`. It links to the existing issue manager, article studio, public issue archive and public article archive.
+The founder publishing entry point is `/founder/portal`. The legacy `/publisher` path redirects to the founder workspace. It links to the existing issue manager, article studio, public issue archive and public article archive.
 
 ## Required deployment settings
 
@@ -31,7 +31,7 @@ The callback deliberately checks BOTH the exact `ADMIN_EMAIL` value and the trus
 - Set `ADMIN_EMAIL` to the same email address in Vercel.
 - Do not place the role in user-editable `user_metadata`.
 
-After deployment, open `/publisher`, choose secure sign-in, and use the authorised Google account. The OAuth callback is `/auth/callback`.
+After deployment, open `/founder/portal`, choose secure sign-in, and use the authorised Google account. The OAuth callback is `/auth/callback`.
 
 ## Publishing workflow
 
