@@ -69,6 +69,6 @@ Each published PDF is intentionally stored as an immutable, versioned object. An
 
 1. In Supabase Authentication → Providers → Email, enable email/password authentication and configure email confirmation according to your publication policy.
 2. Keep Google enabled for the existing administrator flow; the same provider is used for reader accounts.
-3. In Supabase Authentication → URL Configuration, allow the production callback `https://orbit-and-origin-international-scie.vercel.app/auth/callback`.
+3. In Supabase Authentication → URL Configuration, allow both production callback URLs: `https://orbit-and-origin-international-scie.vercel.app/auth/callback?mode=reader` and `https://orbit-and-origin-international-scie.vercel.app/auth/callback?mode=admin` (or an equivalent narrowly-scoped callback wildcard).
 4. Confirm `NEXT_PUBLIC_SITE_URL` matches the production site in Vercel.
 5. Test with a non-administrator email address. It should return to `/account`, never to the founder workspace.
