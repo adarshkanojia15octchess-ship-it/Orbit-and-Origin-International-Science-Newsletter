@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { keepReaderInIssueLibrary } from "@/lib/auth/reader-access";
 
 export const metadata = {
   title: "About ORBIT & ORIGIN",
@@ -59,7 +60,8 @@ const principles = [
   },
 ];
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  await keepReaderInIssueLibrary();
   return (
     <main className="oo-about-page">
       <section className="oo-about-hero" aria-labelledby="about-title">

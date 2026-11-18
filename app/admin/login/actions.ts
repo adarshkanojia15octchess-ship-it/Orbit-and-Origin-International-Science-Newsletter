@@ -7,7 +7,8 @@ export async function signInAdmin(formData: FormData) {
   const email = String(formData.get("email") || "").trim().toLowerCase();
   const password = String(formData.get("password") || "");
   const allowedEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
-  if (!allowedEmail || email !== allowedEmail || !password || password.length > 256) redirect("/admin/login?error=invalid");
+  if (!allowedEmail) redirect("/admin/login?error=configuration");
+  if (email !== allowedEmail || !password || password.length > 256) redirect("/admin/login?error=invalid");
 
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -22,8 +23,8 @@ export async function signInAdmin(formData: FormData) {
 
 export async function signInWithGoogle() {
   const allowedEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim();
-  if (!allowedEmail || !siteUrl) redirect("/admin/login?error=configuration");
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim() || "https://orbit-and-origin-international-scie.vercel.app";
+  if (!allowedEmail) redirect("/admin/login?error=configuration");
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
@@ -39,5 +40,5 @@ export async function signInWithGoogle() {
 export async function signOutAdmin() {
   const supabase = await createClient();
   await supabase.auth.signOut();
-  redirect("/founder/portal");
+  redirect("/issues");
 }
