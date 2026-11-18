@@ -64,7 +64,7 @@ export default function CosmicNeighborhood() {
       </div>
       <footer className="oo-cosmic-sources">
         <div><span className="oo-eyebrow">READING THE COSMOS</span>
-          <p>The scientific framing here follows *Tapestry of Worlds: Beyond Solar System and Universe* by Adarsh Kanojia and Rishi K. Pal, especially its discussion of galaxy formation, the Milky Way, filaments, clusters and cosmic voids. Current counts and descriptions are checked against the linked NASA references.</p>
+          <p>The scientific framing follows <em>Tapestry of Worlds: Beyond Solar System and Universe</em> by Adarsh Kanojia and Rishi K. Pal: dark-matter filaments and dense nodes (pp. 74–77), and galaxy forms and evolution (pp. 94–97). Current neighbourhood counts and measured scales are checked against the linked NASA references.</p>
         </div>
         <div className="oo-cosmic-source-links">{(data?.sources || []).map(source=><a key={source.url} href={source.url} target="_blank" rel="noreferrer">{source.name} ↗</a>)}</div>
         {data?.retrievedAt && <small>NASA image search checked {new Date(data.retrievedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST. {data.editorialNote}</small>}
