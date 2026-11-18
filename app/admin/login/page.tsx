@@ -1,14 +1,15 @@
+import Link from "next/link";
 import { signInAdmin, signInWithGoogle } from "./actions";
 
-export const metadata = { title: "Administrator Sign In" };
+export const metadata = { title: "Founder Sign In", robots: { index: false, follow: false } };
 
 export default async function AdminLoginPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
   const { error } = await searchParams;
   return (
     <main className="page-shell" style={{ maxWidth: 620 }}>
-      <span className="kicker">Restricted area / Publisher portal</span>
-      <h1>Editorial administration.</h1>
-      <p className="muted">Sign in with the authorised publication administrator account.</p>
+      <span className="kicker">Founder-only workspace / Restricted access</span>
+      <h1>Founder workspace.</h1>
+      <p className="muted">Sign in with the single authorised founder account to manage editions, articles and publication settings.</p>
       {error && <p role="alert" className="muted">{error === "configuration" ? "Administrator sign-in is not fully configured yet." : "Sign-in failed or this account is not authorised. Check the account and provider configuration."}</p>}
       <form action={signInWithGoogle} style={{ marginTop: 32 }}>
         <button type="submit">Continue with Google</button>
@@ -24,6 +25,7 @@ export default async function AdminLoginPage({ searchParams }: { searchParams: P
         <button type="submit">Sign in with email</button>
       </form>
       <p className="muted" style={{ marginTop: 24 }}>Google authentication does not grant publishing access by itself. The signed-in Google account must also have the trusted admin role in Supabase and match the configured administrator email.</p>
+    <p className="muted" style={{marginTop:24}}>Reader access is separate. <Link href="/account">Open the public reader sign-in ↗</Link></p>
     </main>
   );
 }
