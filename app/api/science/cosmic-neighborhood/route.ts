@@ -9,7 +9,7 @@ const records = [
     query:"Milky Way galaxy NASA", source:"https://science.nasa.gov/universe/galaxies/" },
   { id:"andromeda", title:"Andromeda · M31", label:"Nearest large galactic neighbour", scale:"About 2.5 million light-years away",
     body:"The Andromeda Galaxy is the other major spiral in our immediate galactic neighbourhood. It is one of the most massive members of the Local Group.",
-    query:"Andromeda Galaxy M31 NASA", source:"https://imagine.gsfc.nasa.gov/features/cosmic/local_group_info.html" },
+    query:"Andromeda Galaxy M31 NASA", source:"https://science.nasa.gov/missions/hubble/hubble-zooms-into-the-rosy-tendrils-of-andromeda/" },
   { id:"triangulum", title:"Triangulum · M33", label:"A major Local Group spiral", scale:"A nearby member of the Local Group",
     body:"Triangulum is another prominent spiral galaxy in our galactic neighbourhood and is commonly identified as the Local Group's third-largest major galaxy.",
     query:"Triangulum Galaxy M33 NASA", source:"https://imagine.gsfc.nasa.gov/features/cosmic/local_group_info.html" },
@@ -20,7 +20,7 @@ const records = [
     body:"Galaxy clusters contain many galaxies together with hot gas and dark matter. NASA places the Local Group near the outer edge of the Virgo Cluster region.",
     query:"Virgo Cluster galaxies NASA Hubble", source:"https://science.nasa.gov/universe/galaxies/large-scale-structures/" },
   { id:"cosmic-web", title:"The Cosmic Web", label:"Large-scale structure", scale:"Filaments, walls and vast voids",
-    body:"Galaxies and clusters are arranged in enormous structures. The visible galaxies trace a wider pattern of matter, with long filaments and low-density voids between them.",
+    body:"Galaxies and clusters are arranged in enormous structures. As discussed in Tapestry of Worlds (pp. 75–77), cosmological simulations show dark-matter filaments intersecting at dense nodes where galaxies and clusters form. We observe the luminous galaxies as tracers of this underlying structure; the dark matter itself is not a direct-light photograph.",
     query:"cosmic web galaxy filaments NASA simulation", source:"https://science.nasa.gov/universe/galaxies/large-scale-structures/" },
 ];
 
