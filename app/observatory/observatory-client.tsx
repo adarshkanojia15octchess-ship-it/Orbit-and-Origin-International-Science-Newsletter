@@ -63,6 +63,21 @@ export default function ObservatoryClient() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [retrievedAt, setRetrievedAt] = useState("");
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  useEffect(() => {
+    const refreshWhenVisible = () => {
+      if (document.visibilityState === "visible") {
+        setRefreshKey((current) => current + 1);
+      }
+    };
+    const interval = window.setInterval(refreshWhenVisible, 15 * 60 * 1000);
+    document.addEventListener("visibilitychange", refreshWhenVisible);
+    return () => {
+      window.clearInterval(interval);
+      document.removeEventListener("visibilitychange", refreshWhenVisible);
+    };
+  }, []);
 
   const [apod, setApod] = useState<ApodData | null>(null);
   const [solarEvents, setSolarEvents] = useState<SolarEvent[]>([]);
@@ -103,7 +118,7 @@ export default function ObservatoryClient() {
       })
       .finally(() => { if (!controller.signal.aborted) setLoading(false); });
     return () => controller.abort();
-  }, [tab]);
+  }, [tab, refreshKey]);
 
   useEffect(() => {
     if (tab !== "solar") return;
@@ -148,7 +163,7 @@ export default function ObservatoryClient() {
       })
       .finally(() => { if (!controller.signal.aborted) setLoading(false); });
     return () => controller.abort();
-  }, [tab, planetQuery, planetMethod]);
+  }, [tab, planetQuery, planetMethod, refreshKey]);
 
   useEffect(() => {
     if (tab !== "papers") return;
@@ -167,7 +182,7 @@ export default function ObservatoryClient() {
       })
       .finally(() => { if (!controller.signal.aborted) setLoading(false); });
     return () => controller.abort();
-  }, [tab, paperQuery, paperCategory]);
+  }, [tab, paperQuery, paperCategory, refreshKey]);
 
   useEffect(() => {
     if (tab !== "gaia") return;
@@ -201,7 +216,7 @@ export default function ObservatoryClient() {
       .catch((reason: unknown) => { if (!controller.signal.aborted) setError(reason instanceof Error ? reason.message : "The USGS earthquake feed is unavailable."); })
       .finally(() => { if (!controller.signal.aborted) setLoading(false); });
     return () => controller.abort();
-  }, [tab, earthquakePeriod, earthquakeMagnitude]);
+  }, [tab, earthquakePeriod, earthquakeMagnitude, refreshKey]);
 
   function submitPlanetSearch(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -248,7 +263,13 @@ export default function ObservatoryClient() {
         <button type="button" role="tab" aria-selected={tab === "earth"} className={tab === "earth" ? "is-active" : ""} onClick={() => setTab("earth")}>Earth Monitor</button>
       </div>
 
-      {loading && <p className="oo-observatory-status" role="status">Retrieving scientific data from the original provider…</p>}
+      <div className="oo-observatory-refresh-row">
+        <p className="oo-observatory-note">Automatic check every 15 minutes while this page is open; returning to this tab also checks again. Provider cache windows vary by source.</p>
+        <button type="button" className="oo-observatory-secondary-button" onClick={() => setRefreshKey((current) => current + 1)} disabled={loading}>
+          {loading ? "Checking…" : "↻ Check for updates"}
+        </button>
+      </div>
+      {loading && <p className="oo-observatory-status" role="status">Checking the latest available records from the scientific providers…</p>}
       {error && <p className="oo-observatory-error" role="alert">{error}</p>}
 
       {tab === "apod" && (
@@ -461,7 +482,7 @@ export default function ObservatoryClient() {
             <span className="oo-observatory-source-mark">EARTH SYSTEM</span>
           </div>
           <div className="oo-earth-image-card">
-            <Image src="/api/science/earth-imagery" alt="Global true-colour satellite imagery from NASA MODIS Terra, served by NASA GIBS." width={1536} height={768} sizes="(max-width: 900px) 100vw, 80vw" />
+            <Image src={"/api/science/earth-imagery?refresh=" + refreshKey} alt="Global true-colour satellite imagery from NASA MODIS Terra, served by NASA GIBS." width={1536} height={768} sizes="(max-width: 900px) 100vw, 80vw" />
             <p>NASA Global Imagery Browse Services · MODIS Terra corrected reflectance, true colour. The latest available composite may lag the current date.</p>
           </div>
           <div className="oo-observatory-panel-heading oo-subpanel-heading">
@@ -492,7 +513,7 @@ export default function ObservatoryClient() {
         </section>
       )}
 
-      {retrievedAt && <p className="oo-observatory-last-updated">Data retrieved {new Date(retrievedAt).toLocaleString()} · Always consult the original provider for the latest record.</p>}
+      {retrievedAt && <p className="oo-observatory-last-updated">Checked by ORBIT &amp; ORIGIN: {new Date(retrievedAt).toLocaleString()} · This is the check time, not necessarily the scientific observation or catalogue release date. Consult the provider for its record-level timestamps.</p>}
       <footer className="oo-observatory-integrity">
         <span className="oo-eyebrow">A NOTE ON SCIENTIFIC EVIDENCE</span>
         <p>ORBIT &amp; ORIGIN displays records supplied by external scientific services. A catalogue entry, candidate, model output or preprint is not automatically a confirmed discovery or a peer-reviewed result. Editorial interpretation remains subject to human review.</p>
