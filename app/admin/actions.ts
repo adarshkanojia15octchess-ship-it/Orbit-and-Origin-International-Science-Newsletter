@@ -18,7 +18,7 @@ const issueSchema = z.object({
 const MAX_PDF_BYTES = 25 * 1024 * 1024;
 const MAX_COVER_BYTES = 8 * 1024 * 1024;
 
-function redirectToDashboard(formData: FormData, query: string) {
+function redirectToDashboard(formData: FormData, query: string): never {
   const destination = formData.get("return_to") === "/founder/portal" ? "/founder/portal" : "/admin";
   redirect(`${destination}?${query}`);
 }
