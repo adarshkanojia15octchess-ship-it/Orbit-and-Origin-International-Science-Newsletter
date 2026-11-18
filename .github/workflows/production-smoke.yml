@@ -57,7 +57,7 @@ jobs:
             return 1
           }
 
-          for path in / /publisher /issues /articles; do
+          for path in / /publisher /founder/portal /account /issues /articles; do
             check_status 200 "$path"
           done
 
