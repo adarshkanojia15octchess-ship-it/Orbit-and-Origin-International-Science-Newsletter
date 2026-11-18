@@ -1,9 +1,22 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
 import { signInAdmin, signInWithGoogle } from "./actions";
 
 export const metadata = { title: "Founder Sign In", robots: { index: false, follow: false } };
 
 export default async function AdminLoginPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
+  const supabase = await createClient();
+  const { data: authData } = await supabase.auth.getUser();
+  if (authData.user) {
+    const adminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
+    const isFounder = Boolean(
+      authData.user.app_metadata?.role === "admin" &&
+      adminEmail &&
+      authData.user.email?.toLowerCase() === adminEmail
+    );
+    redirect(isFounder ? "/founder/portal" : "/issues");
+  }
   const { error } = await searchParams;
   return (
     <main className="page-shell" style={{ maxWidth: 620 }}>
