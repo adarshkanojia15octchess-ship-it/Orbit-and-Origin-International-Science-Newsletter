@@ -627,3 +627,7 @@ button:disabled { opacity:.35; cursor:not-allowed; }
   .oo-founder-schedule-form { width:100%; align-items:stretch; }
   .oo-founder-schedule-form input { width:100%; }
 }
+
+
+.oo-founder-upload-progress { margin:12px 0; color:var(--oo-gold); font-size:12px; line-height:1.7; }
+.oo-founder-form-actions button:disabled { opacity:.62; cursor:wait; }
