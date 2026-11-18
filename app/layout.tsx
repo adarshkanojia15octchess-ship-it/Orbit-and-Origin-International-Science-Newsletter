@@ -8,7 +8,7 @@ export const metadata: Metadata = {
     template: "%s | ORBIT & ORIGIN",
   },
   description: "An independent science and astronomy publication.",
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://orbit-and-origin-international-scie.vercel.app"),
 };
 
 const nav = [
