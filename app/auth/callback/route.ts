@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
       await supabase.auth.signOut();
       return go("/account?error=oauth");
     }
-    return go("/account?welcome=1");
+    return go("/issues");
   }
 
   // Default and explicit admin callbacks retain strict trusted-role and email checks.
@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
     allowedEmail && data.user.email?.toLowerCase() === allowedEmail);
   if (!authorised) {
     await supabase.auth.signOut();
-    return go("/founder/portal?error=unauthorised");
+    return go("/issues");
   }
   return go("/founder/portal");
 }
