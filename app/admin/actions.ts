@@ -433,3 +433,69 @@ export async function unpublishIssue(formData: FormData) {
   revalidatePath(`/issues/${issue.issue_number}`);
   redirectToDashboard(formData, "unpublished=1");
 }
+
+
+/**
+ * Finalise issue metadata after the browser has uploaded the large files
+ * directly to Supabase Storage. This keeps PDF bytes out of Vercel Functions.
+ */
+export async function createIssueRecord(formData: FormData): Promise<{ ok: boolean; message?: string }> {
+  const context = await getAdminContext();
+  if (!context) return { ok: false, message: "Your administrator session has expired. Sign in again before publishing." };
+
+  const parsed = issueSchema.safeParse({
+    issue_number: formData.get("issue_number"),
+    title: formData.get("title"),
+    description: formData.get("description"),
+    publication_date: formData.get("publication_date"),
+    departments: formData.getAll("departments"),
+  });
+  if (!parsed.success) return { ok: false, message: "Check the issue number, title, description, date and selected departments." };
+
+  const issueNumber = parsed.data.issue_number;
+  const pdfPath = String(formData.get("pdf_path") || "");
+  const coverPath = String(formData.get("cover_path") || "");
+  const prefix = `issues/${issueNumber}/`;
+  const uuidPart = "[0-9a-f-]{36}";
+  const pdfPattern = new RegExp(`^${prefix}${uuidPart}\\\\.pdf$`, "i");
+  const coverPattern = new RegExp(`^${prefix}${uuidPart}-cover\\\\.(jpg|png|webp)$`, "i");
+  if (!pdfPattern.test(pdfPath) || !coverPattern.test(coverPath)) {
+    return { ok: false, message: "The uploaded file references are invalid. Please upload both files again." };
+  }
+
+  const [pdfCheck, coverCheck] = await Promise.all([
+    context.supabase.storage.from("issue-drafts").createSignedUrl(pdfPath, 60),
+    context.supabase.storage.from("issue-drafts").createSignedUrl(coverPath, 60),
+  ]);
+  if (pdfCheck.error || coverCheck.error || !pdfCheck.data?.signedUrl || !coverCheck.data?.signedUrl) {
+    await context.supabase.storage.from("issue-drafts").remove([pdfPath, coverPath]);
+    return { ok: false, message: "Supabase could not verify both uploaded files. Check storage access and try again." };
+  }
+
+  const slug = `${String(issueNumber).padStart(3, "0")}-${slugify(parsed.data.title)}`;
+  const { error } = await context.supabase.from("issues").insert({
+    issue_number: issueNumber,
+    title: parsed.data.title,
+    slug,
+    description: parsed.data.description,
+    publication_date: parsed.data.publication_date,
+    departments: parsed.data.departments,
+    pdf_url: pdfPath,
+    cover_image_url: coverPath,
+    status: "draft",
+  });
+  if (error) {
+    await context.supabase.storage.from("issue-drafts").remove([pdfPath, coverPath]);
+    return {
+      ok: false,
+      message: error.code === "23505"
+        ? "That issue number or issue slug already exists. Check the publication library and try again."
+        : "The uploaded files are safe in private storage, but the issue record could not be created. Check the Supabase issues table and administrator policy.",
+    };
+  }
+
+  revalidatePath("/");
+  revalidatePath("/issues");
+  revalidatePath("/founder/portal");
+  return { ok: true };
+}
