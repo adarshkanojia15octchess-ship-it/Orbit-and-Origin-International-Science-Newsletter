@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import type { Issue } from "@/lib/types";
 import { isPublishedStorageAsset } from "@/src/editorial/asset-url";
+import ReaderRoadmap from "@/components/reader-roadmap";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
@@ -42,8 +43,8 @@ export default async function IssuesPage({ searchParams }: { searchParams: Searc
     <div className="oo-archive">
       <header className="oo-archive-intro">
         <span className="oo-eyebrow">THE DIGITAL LIBRARY · EST. 2026</span>
-        <h1>Ideas worth<br/><em>looking closer at.</em></h1>
-        <p>Each edition is a considered record of discovery — from the scale of distant galaxies to the instruments expanding our reach.</p>
+        <h1>Discoveries worth<br/><em>spending time with.</em></h1>
+        <p>Choose a published edition, read it in the online viewer, or keep the original PDF. Browse by subject or year and return to the ideas that stay with you.</p>
       </header>
       <section className="oo-archive-tools" aria-label="Filter the archive">
         <form action="/issues" method="get" className="oo-filter-form">
@@ -84,6 +85,7 @@ export default async function IssuesPage({ searchParams }: { searchParams: Searc
           })}
         </section>
       )}
+      <ReaderRoadmap />
     </div>
   );
 }
