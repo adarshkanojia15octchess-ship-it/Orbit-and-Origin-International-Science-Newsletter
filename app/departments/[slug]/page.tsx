@@ -53,7 +53,7 @@ function safeImage(images:ArticleRow["images"]) {
 
 export default async function DepartmentPage({ params }: { params: Promise<{ slug: string }> }) {
   const {slug} = await params;
-  if (!(slug in departments)) notFound();
+  if (!Object.prototype.hasOwnProperty.call(departments, slug)) notFound();
   const department = departments[slug as ArticleDepartment];
   let articles:ArticleRow[] = [];
   let unavailable = false;
