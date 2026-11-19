@@ -43,7 +43,9 @@ export function loadPdfJs(): Promise<PdfJsApi> {
   if (pdfJsLoading) return pdfJsLoading;
 
   pdfJsLoading = new Promise((resolve, reject) => {
+    let activeScript: HTMLScriptElement | null = null;
     const fail = () => {
+      activeScript?.remove();
       pdfJsLoading = null;
       reject(new Error("PDF.js could not be loaded. Check your connection and try again."));
     };
@@ -58,6 +60,7 @@ export function loadPdfJs(): Promise<PdfJsApi> {
     };
 
     let script = document.querySelector<HTMLScriptElement>('script[data-pdfjs="true"]');
+    activeScript = script;
     if (script?.dataset.loaded === "true" && !window.pdfjsLib) {
       script.remove();
       script = null;
@@ -70,6 +73,7 @@ export function loadPdfJs(): Promise<PdfJsApi> {
     }
 
     const nextScript = document.createElement("script");
+    activeScript = nextScript;
     nextScript.src = PDFJS_SCRIPT;
     nextScript.async = true;
     nextScript.crossOrigin = "anonymous";
