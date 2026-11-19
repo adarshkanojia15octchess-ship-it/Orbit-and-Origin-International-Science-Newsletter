@@ -738,3 +738,31 @@ button:disabled { opacity:.35; cursor:not-allowed; }
   .oo-reader-stage:fullscreen { max-height:none; min-height:100vh; }
   .oo-reader-accessibility-note { padding:0 10px 12px; text-align:center; }
 }
+
+
+/* Fullscreen includes the complete reader chrome, not just the page canvas */
+.oo-reader:fullscreen {
+  display:flex;
+  flex-direction:column;
+  width:100vw;
+  height:100vh;
+  min-height:100vh;
+  border:0;
+  background:#0C1B2D;
+}
+.oo-reader:fullscreen .oo-reader-toolbar,
+.oo-reader:fullscreen .oo-reader-progress,
+.oo-reader:fullscreen .oo-reader-hint,
+.oo-reader:fullscreen .oo-reader-accessibility-note { flex-shrink:0; }
+.oo-reader:fullscreen .oo-reader-stage {
+  flex:1 1 auto;
+  min-height:0;
+  max-height:none;
+  overflow:auto;
+}
+@media(max-width:620px) {
+  .oo-reader:fullscreen .oo-reader-stage {
+    min-height:0;
+    max-height:none;
+  }
+}
