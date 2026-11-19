@@ -5,6 +5,7 @@ import type { Issue } from "@/lib/types";
 import { getAdminContext } from "@/lib/auth/admin";
 import { isPublishedStorageAsset } from "@/src/editorial/asset-url";
 import FounderIssueUploader from "@/components/founder-issue-uploader";
+import FounderIssueBatchUploader from "@/components/founder-issue-batch-uploader";
 import {
   cancelIssueSchedule, publishIssue, scheduleIssue, unpublishIssue, updateIssue,
 } from "@/app/admin/actions";
@@ -119,9 +120,17 @@ export default async function FounderWorkspacePage({
       {params.error && <p className="oo-founder-error" role="alert">{feedback[params.error] || "The requested publishing action could not be completed."}</p>}
       {error && <p className="oo-founder-error" role="alert">The issue database could not be read. Check the Supabase connection, migrations and administrator database policy. The upload form remains available, but the issue list may be incomplete.</p>}
 
+      <section className="oo-founder-section" aria-labelledby="batch-upload-heading">
+        <div className="oo-founder-section-heading">
+          <div><span className="kicker">01 / Back catalogue</span><h2 id="batch-upload-heading">Import multiple editions.</h2></div>
+          <p>Bring several existing issue PDFs into the archive in one batch. Each edition keeps its own details and is saved privately as a draft for review.</p>
+        </div>
+        <FounderIssueBatchUploader/>
+      </section>
+
       <section className="oo-founder-section" aria-labelledby="upload-heading">
         <div className="oo-founder-section-heading">
-          <div><span className="kicker">01 / New edition</span><h2 id="upload-heading">Upload an issue.</h2></div>
+          <div><span className="kicker">02 / New edition</span><h2 id="upload-heading">Upload an issue.</h2></div>
           <p>Enter its bibliographic details, add the edition PDF and cover, then save it privately as a draft. Nothing becomes public until you publish it.</p>
         </div>
         <FounderIssueUploader/>
@@ -129,7 +138,7 @@ export default async function FounderWorkspacePage({
 
       <section className="oo-founder-section" aria-labelledby="editions-heading">
         <div className="oo-founder-section-heading">
-          <div><span className="kicker">02 / Publication library</span><h2 id="editions-heading">Your editions.</h2></div>
+          <div><span className="kicker">03 / Publication library</span><h2 id="editions-heading">Your editions.</h2></div>
           <p>Every saved issue appears here with its metadata, cover preview, file access and publication controls.</p>
         </div>
         {!error && issues.length === 0 ? (
