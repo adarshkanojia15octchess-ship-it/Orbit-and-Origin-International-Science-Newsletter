@@ -2,71 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-declare global {
-  interface Window {
-    pdfjsLib?: {
-      GlobalWorkerOptions: { workerSrc: string };
-      getDocument: (options: { url: string; withCredentials?: boolean }) => { promise: Promise<PDFDocument> };
-    };
-  }
-}
-
-type PDFDocument = {
-  numPages: number;
-  getPage: (page: number) => Promise<PDFPage>;
-  destroy: () => Promise<void>;
-};
-
-type PDFPage = {
-  getViewport: (options: { scale: number; rotation?: number }) => { width: number; height: number };
-  render: (options: { canvasContext: CanvasRenderingContext2D; viewport: { width: number; height: number } }) => { promise: Promise<void>; cancel: () => void };
-};
-
-const PDFJS_VERSION = "3.11.174";
-const PDFJS_SCRIPT = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/" + PDFJS_VERSION + "/pdf.min.js";
-const PDFJS_WORKER = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/" + PDFJS_VERSION + "/pdf.worker.min.js";
-
-let pdfJsLoading: Promise<NonNullable<Window["pdfjsLib"]>> | null = null;
-
-function loadPdfJs(): Promise<NonNullable<Window["pdfjsLib"]>> {
-  if (window.pdfjsLib) return Promise.resolve(window.pdfjsLib);
-  if (pdfJsLoading) return pdfJsLoading;
-
-  pdfJsLoading = new Promise((resolve, reject) => {
-    const fail = () => {
-      pdfJsLoading = null;
-      reject(new Error("PDF.js could not be loaded. Check your connection and try again."));
-    };
-    const complete = (script: HTMLScriptElement) => {
-      script.dataset.loaded = "true";
-      if (window.pdfjsLib) resolve(window.pdfjsLib);
-      else fail();
-    };
-
-    let script = document.querySelector<HTMLScriptElement>('script[data-pdfjs="true"]');
-    if (script?.dataset.loaded === "true" && !window.pdfjsLib) {
-      script.remove();
-      script = null;
-    }
-
-    if (script) {
-      script.addEventListener("load", () => complete(script as HTMLScriptElement), { once: true });
-      script.addEventListener("error", fail, { once: true });
-      return;
-    }
-
-    const nextScript = document.createElement("script");
-    nextScript.src = PDFJS_SCRIPT;
-    nextScript.async = true;
-    nextScript.crossOrigin = "anonymous";
-    nextScript.dataset.pdfjs = "true";
-    nextScript.onload = () => complete(nextScript);
-    nextScript.onerror = fail;
-    document.head.appendChild(nextScript);
-  });
-
-  return pdfJsLoading;
-}
+import { loadPdfJs, type PdfDocument, type PdfPage } from "@/src/editorial/pdfjs";
 
 type Props = { url: string; title: string; downloadName: string };
 
@@ -74,7 +10,7 @@ export function PdfReader({ url, title, downloadName }: Props) {
   const readerRef = useRef<HTMLElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const documentRef = useRef<PDFDocument | null>(null);
+  const documentRef = useRef<PdfDocument | null>(null);
   const renderRef = useRef<{ cancel: () => void } | null>(null);
   const currentScaleRef = useRef(1);
 
@@ -121,7 +57,6 @@ export function PdfReader({ url, title, downloadName }: Props) {
 
     loadPdfJs()
       .then((pdfjs) => {
-        pdfjs.GlobalWorkerOptions.workerSrc = PDFJS_WORKER;
         return pdfjs.getDocument({ url, withCredentials: false }).promise;
       })
       .then((pdf) => {

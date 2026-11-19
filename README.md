@@ -107,6 +107,7 @@ Implemented on the Phase 2 feature branch:
 - PDF.js-powered issue reader with page navigation, progress scrubbing, fit modes, zoom, rotation, fullscreen, keyboard controls and always-visible original-PDF open/download fallbacks.
 - Protected administrator login using Supabase Auth, trusted `app_metadata.role`, and an `ADMIN_EMAIL` allow-list.
 - Issue draft creation, PDF/cover validation and upload, issue metadata editing, scheduling, cancellation, immediate publishing and unpublishing with assets returned to private storage.
+- Back-catalogue batch importer for up to eight PDFs per session, with per-issue metadata, optional separate covers, first-page cover previews, duplicate-number checks and private-draft-only saves.
 - Structured editorial article drafts with headline, author, department, Markdown body, HTTPS images/captions, source references, issue association, publishing, scheduling, unpublishing and archiving.
 - Public article archive with title search and department filtering; public article reading pages.
 - Issue archive search by title with department and year filters.
