@@ -71,6 +71,7 @@ function loadPdfJs(): Promise<NonNullable<Window["pdfjsLib"]>> {
 type Props = { url: string; title: string; downloadName: string };
 
 export function PdfReader({ url, title, downloadName }: Props) {
+  const readerRef = useRef<HTMLElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const documentRef = useRef<PDFDocument | null>(null);
@@ -103,7 +104,7 @@ export function PdfReader({ url, title, downloadName }: Props) {
   }, []);
 
   useEffect(() => {
-    const syncFullscreen = () => setIsFullscreen(document.fullscreenElement === stageRef.current);
+    const syncFullscreen = () => setIsFullscreen(document.fullscreenElement === readerRef.current);
     document.addEventListener("fullscreenchange", syncFullscreen);
     return () => document.removeEventListener("fullscreenchange", syncFullscreen);
   }, []);
@@ -156,6 +157,7 @@ export function PdfReader({ url, title, downloadName }: Props) {
       if (!pdf || !canvas || !stage || !pageCount) return;
 
       renderRef.current?.cancel();
+      setError("");
       try {
         const pdfPage = await pdf.getPage(page);
         if (!active) return;
@@ -200,11 +202,11 @@ export function PdfReader({ url, title, downloadName }: Props) {
   const next = useCallback(() => setPage((value) => Math.min(pageCount || 1, value + 1)), [pageCount]);
   const zoomIn = useCallback(() => {
     setFit("manual");
-    setZoom(Math.min(4, Math.round(currentScaleRef.current * 1.1 * 100) / 100));
+    setZoom(Math.min(5, Math.round(currentScaleRef.current * 1.1 * 100) / 100));
   }, []);
   const zoomOut = useCallback(() => {
     setFit("manual");
-    setZoom(Math.max(0.5, Math.round(currentScaleRef.current / 1.1 * 100) / 100));
+    setZoom(Math.max(0.25, Math.round(currentScaleRef.current / 1.1 * 100) / 100));
   }, []);
   const fitWidth = useCallback(() => setFit("width"), []);
   const fitPage = useCallback(() => setFit("page"), []);
@@ -214,8 +216,8 @@ export function PdfReader({ url, title, downloadName }: Props) {
   const fullscreen = useCallback(async () => {
     if (!stageRef.current) return;
     try {
-      if (document.fullscreenElement === stageRef.current) await document.exitFullscreen();
-      else await stageRef.current.requestFullscreen();
+      if (document.fullscreenElement === readerRef.current) await document.exitFullscreen();
+      else await readerRef.current?.requestFullscreen();
     } catch {
       setError("Fullscreen is not available in this browser.");
     }
@@ -254,7 +256,7 @@ export function PdfReader({ url, title, downloadName }: Props) {
   const downloadUrl = url + (url.includes("?") ? "&" : "?") + "download=" + encodeURIComponent(downloadName);
 
   return (
-    <section className="oo-reader" aria-label="PDF edition reader">
+    <section ref={readerRef} className="oo-reader" aria-label="PDF edition reader">
       <div className="oo-reader-toolbar">
         <div className="oo-reader-group" aria-label="Page navigation">
           <button type="button" onClick={previous} disabled={loading || page <= 1} aria-label="Previous page">←</button>
