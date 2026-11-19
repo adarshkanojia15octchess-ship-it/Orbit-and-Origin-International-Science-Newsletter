@@ -664,3 +664,105 @@ button:disabled { opacity:.35; cursor:not-allowed; }
   .reader-roadmap-card-top { align-items:flex-start; flex-direction:column; }
   .reader-roadmap-label { text-align:left; }
 }
+
+
+/* Issue reader: progress, fallback actions and compact mobile controls */
+.oo-reader-progress {
+  display:grid;
+  grid-template-columns:minmax(180px,260px) minmax(0,1fr);
+  align-items:center;
+  gap:18px;
+  padding:12px 16px;
+  border-bottom:1px solid var(--oo-line);
+  background:#102238;
+}
+.oo-reader-progress-label {
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  color:#98A8B7;
+  font-size:9px;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+}
+.oo-reader-progress-label strong {
+  color:var(--oo-paper);
+  font-size:11px;
+  font-weight:500;
+  letter-spacing:0;
+  text-transform:none;
+}
+.oo-reader-progress input[type=range] {
+  width:100%;
+  min-height:28px;
+  margin:0;
+  accent-color:var(--oo-gold);
+  cursor:pointer;
+}
+.oo-reader-progress input[type=range]:disabled { cursor:wait; opacity:.45; }
+.oo-reader-open {
+  min-height:36px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:7px 11px;
+  border:1px solid rgba(213,183,127,.48);
+  color:var(--oo-gold);
+  font-size:11px;
+  white-space:nowrap;
+}
+.oo-reader-open:hover,.oo-reader-download:hover { border-color:var(--oo-gold); background:rgba(213,183,127,.08); }
+.oo-reader-group button:focus-visible,.oo-reader-open:focus-visible,.oo-reader-download:focus-visible,.oo-reader-progress input:focus-visible,.oo-page-field input:focus-visible,.oo-reader-stage:focus-visible {
+  outline:2px solid var(--oo-gold);
+  outline-offset:3px;
+}
+.oo-reader-accessibility-note {
+  margin:0;
+  padding:0 14px 14px;
+  color:#98A8B7;
+  font-size:10px;
+  line-height:1.7;
+}
+@media(max-width:900px) {
+  .oo-reader-toolbar { justify-content:flex-start; }
+  .oo-reader-file-actions { margin-left:auto; }
+}
+@media(max-width:620px) {
+  .oo-reader-progress { grid-template-columns:1fr; gap:7px; padding:10px 12px; }
+  .oo-reader-toolbar { justify-content:stretch; align-items:stretch; gap:8px; }
+  .oo-reader-group { justify-content:center; }
+  .oo-reader-toolbar>.oo-reader-group { flex:1 1 auto; }
+  .oo-reader-file-actions { margin-left:0; }
+  .oo-reader-file-actions a { flex:1 1 130px; }
+  .oo-reader-stage { min-height:62vh; max-height:calc(100vh - 290px); padding:10px; }
+  .oo-reader-stage:fullscreen { max-height:none; min-height:100vh; }
+  .oo-reader-accessibility-note { padding:0 10px 12px; text-align:center; }
+}
+
+
+/* Fullscreen includes the complete reader chrome, not just the page canvas */
+.oo-reader:fullscreen {
+  display:flex;
+  flex-direction:column;
+  width:100vw;
+  height:100vh;
+  min-height:100vh;
+  border:0;
+  background:#0C1B2D;
+}
+.oo-reader:fullscreen .oo-reader-toolbar,
+.oo-reader:fullscreen .oo-reader-progress,
+.oo-reader:fullscreen .oo-reader-hint,
+.oo-reader:fullscreen .oo-reader-accessibility-note { flex-shrink:0; }
+.oo-reader:fullscreen .oo-reader-stage {
+  flex:1 1 auto;
+  min-height:0;
+  max-height:none;
+  overflow:auto;
+}
+@media(max-width:620px) {
+  .oo-reader:fullscreen .oo-reader-stage {
+    min-height:0;
+    max-height:none;
+  }
+}
