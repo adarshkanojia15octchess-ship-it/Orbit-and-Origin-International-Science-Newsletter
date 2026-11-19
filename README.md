@@ -104,7 +104,7 @@ Implemented on the Phase 2 feature branch:
 - Public archive backed by Supabase.
 - Department landing pages, About, Editorial Standards, Contact and Privacy pages.
 - Latest issue redirect and issue-specific reading route.
-- Browser-native embedded PDF reader with open/download fallback.
+- PDF.js-powered issue reader with page navigation, progress scrubbing, fit modes, zoom, rotation, fullscreen, keyboard controls and always-visible original-PDF open/download fallbacks.
 - Protected administrator login using Supabase Auth, trusted `app_metadata.role`, and an `ADMIN_EMAIL` allow-list.
 - Issue draft creation, PDF/cover validation and upload, issue metadata editing, scheduling, cancellation, immediate publishing and unpublishing with assets returned to private storage.
 - Structured editorial article drafts with headline, author, department, Markdown body, HTTPS images/captions, source references, issue association, publishing, scheduling, unpublishing and archiving.
@@ -125,7 +125,6 @@ Not yet implemented or not yet verified:
 - Resend campaign delivery, test sends, webhooks, bounce handling, retries and idempotent background queue.
 - Full publication audit history and robust scheduled-publication retry monitoring.
 - Production-grade abuse prevention beyond the current honeypot and database rate limiter (e.g. Turnstile), and security review of all public endpoints.
-- PDF.js-specific reader controls (the current reader uses the browser's built-in PDF viewer).
 - Searchable article archive and filters.
 - Automated end-to-end tests and production deployment verification.
 
