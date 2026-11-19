@@ -214,10 +214,11 @@ export function PdfReader({ url, title, downloadName }: Props) {
   const rotateRight = useCallback(() => setRotation((value) => (value + 90) % 360), []);
 
   const fullscreen = useCallback(async () => {
-    if (!stageRef.current) return;
+    const reader = readerRef.current;
+    if (!reader) return;
     try {
-      if (document.fullscreenElement === readerRef.current) await document.exitFullscreen();
-      else await readerRef.current?.requestFullscreen();
+      if (document.fullscreenElement === reader) await document.exitFullscreen();
+      else await reader.requestFullscreen();
     } catch {
       setError("Fullscreen is not available in this browser.");
     }
