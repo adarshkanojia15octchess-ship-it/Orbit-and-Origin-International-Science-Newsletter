@@ -109,6 +109,8 @@ export async function createPdfFirstPageCover(file: File): Promise<Blob> {
     const context = canvas.getContext("2d");
     if (!context) throw new Error("The browser could not prepare a cover preview.");
 
+    context.fillStyle = "#ffffff";
+    context.fillRect(0, 0, canvas.width, canvas.height);
     await firstPage.render({ canvasContext: context, viewport }).promise;
 
     const blob = await new Promise<Blob>((resolve, reject) => {
