@@ -46,12 +46,12 @@ const DEPARTMENTS: Record<DepartmentKey, {
         id: "nasa-science", name: "NASA Science", type: "rss",
         feedUrl: "https://science.nasa.gov/feed/", homeUrl: "https://science.nasa.gov/",
         allowedHosts: ["nasa.gov"], recordType: "Institutional science update",
-      },
+        includePattern: /\b(astrophysic|astronom|cosmolog|exoplanet|planet|solar system|star|stellar|galax|black hole|nebula|supernova|telescope|spacecraft|mission|space science|space exploration|Mars|Moon|lunar|Jupiter|Saturn|asteroid|comet|Voyager|Euclid|Roman Space Telescope|Hubble|Webb|JWST|Chandra|X-ray|gravitational wave)\b/i,
       {
         id: "esa-news", name: "European Space Agency", type: "rss",
         feedUrl: "https://www.esa.int/rssfeed/TopNews", homeUrl: "https://www.esa.int/",
         allowedHosts: ["esa.int"], recordType: "Agency news release",
-      },
+        includePattern: /\b(astronom|astrophysic|cosmolog|exoplanet|planet|solar system|spacecraft|mission|space telescope|telescope|galax|black hole|nebula|asteroid|comet|Hera|Euclid|Hubble|Webb|satellite|space science|space exploration|lunar|Mars|Jupiter|Saturn)\b/i,
       {
         id: "nasa-jpl-centre", name: "NASA/JPL Centre News", type: "rss",
         feedUrl: "https://www.nasa.gov/centers-and-facilities/jpl/feed/",
@@ -81,7 +81,7 @@ const DEPARTMENTS: Record<DepartmentKey, {
         id: "nasa-aeronautics", name: "NASA Aeronautics", type: "rss",
         feedUrl: "https://www.nasa.gov/aeronautics/feed/", homeUrl: "https://www.nasa.gov/aeronautics/",
         allowedHosts: ["nasa.gov"], recordType: "Aeronautics and flight-research update",
-        includePattern: /\b(aeronautic(?:s)?|aircraft|aviation|flight research|supersonic|propulsion|aerospace|wind tunnel|experimental aircraft|aerodynamic|drone|helicopter|planetary landing|navigation experiment|X-59|Mars helicopter|quiet supersonic)\b/i,
+        includePattern: /\b(aircraft|flight research|flight test|supersonic|propulsion|wind tunnel|experimental aircraft|aerodynamic|drone|helicopter|planetary landing|navigation experiment|X-59|X-70|Mars helicopter|quiet supersonic|flight deployment)\b/i,
       },
       {
         id: "nsf-technology", name: "U.S. National Science Foundation", type: "rss",
@@ -116,7 +116,7 @@ const DEPARTMENTS: Record<DepartmentKey, {
         id: "arxiv-cross-disciplinary", name: "arXiv · Cross-disciplinary research", type: "arxiv",
         feedUrl: "https://export.arxiv.org/api/query", homeUrl: "https://arxiv.org/",
         allowedHosts: ["arxiv.org"], recordType: "Research preprint",
-        searchQuery: "cat:physics.* OR cat:math.* OR cat:q-bio.* OR cat:stat.* OR cat:q-fin.*",
+        searchQuery: "cat:physics.* OR cat:math.* OR cat:q-bio.* OR cat:stat.*",
       },
     ],
   },
