@@ -27,7 +27,7 @@ const departments: Record<ArticleDepartment, {
   "universal-record": {
     number:"03", title:"The Universal Record", subtitle:"A considered record of scientific progress.",
     description:"A cross-disciplinary record of discoveries, research announcements, scientific history, milestones and important events. We connect developments across the physical, life, mathematical and computational sciences while distinguishing evidence from interpretation.",
-    themes:["Research announcements","Scientific history","Milestones & awards","Events and the research calendar"],
+    themes:["Research announcements","Cross-disciplinary discoveries","Scientific history & milestones","Institutions & major programmes"],
     imageQuery:"NASA scientific discovery astronomy observatory research", imageAlt:"Scientific discovery image from NASA",
   },
 };
