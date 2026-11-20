@@ -47,11 +47,13 @@ const DEPARTMENTS: Record<DepartmentKey, {
         feedUrl: "https://science.nasa.gov/feed/", homeUrl: "https://science.nasa.gov/",
         allowedHosts: ["nasa.gov"], recordType: "Institutional science update",
         includePattern: /\b(astrophysic|astronom|cosmolog|exoplanet|planet|solar system|star|stellar|galax|black hole|nebula|supernova|telescope|spacecraft|mission|space science|space exploration|Mars|Moon|lunar|Jupiter|Saturn|asteroid|comet|Voyager|Euclid|Roman Space Telescope|Hubble|Webb|JWST|Chandra|X-ray|gravitational wave)\b/i,
+      },
       {
         id: "esa-news", name: "European Space Agency", type: "rss",
         feedUrl: "https://www.esa.int/rssfeed/TopNews", homeUrl: "https://www.esa.int/",
         allowedHosts: ["esa.int"], recordType: "Agency news release",
         includePattern: /\b(astronom|astrophysic|cosmolog|exoplanet|planet|solar system|spacecraft|mission|space telescope|telescope|galax|black hole|nebula|asteroid|comet|Hera|Euclid|Hubble|Webb|satellite|space science|space exploration|lunar|Mars|Jupiter|Saturn)\b/i,
+      },
       {
         id: "nasa-jpl-centre", name: "NASA/JPL Centre News", type: "rss",
         feedUrl: "https://www.nasa.gov/centers-and-facilities/jpl/feed/",
