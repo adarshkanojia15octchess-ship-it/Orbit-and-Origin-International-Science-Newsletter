@@ -80,7 +80,7 @@ function utcInstantLabel(value: string | null | undefined) {
   const instant = new Date(value);
   return Number.isNaN(instant.getTime())
     ? value
-    : instant.toISOString().replace("T", " ").replace(/\\.\\d{3}Z$/, " UTC");
+    : instant.toISOString().replace("T", " ").replace("Z", " UTC");
 }
 
 function numberLabel(value: number | null, suffix = "") {
