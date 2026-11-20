@@ -11,7 +11,7 @@ type CosmicMediaItem = {
   copyright: string | null; imageUrl: string | null; sourceUrl: string;
 };
 type CosmicMediaResponse = {
-  query: string; mediaType: string; page: number; items: CosmicMediaItem[];
+  query: string; mediaType: string; page: number; isDaily: boolean; items: CosmicMediaItem[];
   featured: CosmicMediaItem | null; total: number; source: string;
   sourceUrl: string; retrievedAt: string;
 };
@@ -299,7 +299,7 @@ export default function ObservatoryClient() {
                 ) : <div className="oo-observatory-placeholder"><span>{cosmicMedia.featured.mediaType.toUpperCase()} PREVIEW</span><p>A preview is not available here. Open the original NASA record to view or listen to this item.</p></div>}
               </div>
               <div className="oo-cosmic-feature-copy">
-                <p className="oo-observatory-date">TODAY’S COSMIC FRAME · AUTOMATED ARCHIVE SELECTION · {dateLabel(cosmicMedia.featured.dateCreated)}</p>
+                <p className="oo-observatory-date">{cosmicMedia.isDaily ? "TODAY’S COSMIC FRAME · AUTOMATED ARCHIVE SELECTION" : "NASA ARCHIVE SEARCH RESULT"} · {dateLabel(cosmicMedia.featured.dateCreated)}</p>
                 <h3>{cosmicMedia.featured.title}</h3>
                 <p>{cosmicMedia.featured.description || "NASA’s archive record does not include a description."}</p>
                 {cosmicMedia.featured.center && <p className="oo-observatory-credit">NASA centre · {cosmicMedia.featured.center}</p>}
