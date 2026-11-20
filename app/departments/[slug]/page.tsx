@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { searchNasaImage } from "@/lib/science/nasa-images";
 import type { ArticleDepartment } from "@/lib/types";
+import DepartmentKnowledgeDesk from "./knowledge-desk";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -13,20 +14,20 @@ const departments: Record<ArticleDepartment, {
 }> = {
   "tapestry-of-worlds": {
     number:"01", title:"Tapestry of Worlds", subtitle:"The universe, observed and understood.",
-    description:"Astronomy, astrophysics, cosmology, planetary science and space exploration. We follow evidence from our Solar System to the distant universe, placing new observations in their scientific context.",
+    description:"Astronomy, astrophysics, cosmology, planetary science, heliophysics and space exploration. We follow observations from our Solar System to the distant universe, placing new results in their scientific context.",
     themes:["Astronomy & observing","Stars, galaxies & black holes","Cosmology & fundamental physics","Planetary science & exploration"],
     imageQuery:"spiral galaxy nebula star formation NASA", imageAlt:"Astronomy and galaxy image from NASA",
   },
   "frontier-tech": {
     number:"02", title:"Frontier Tech", subtitle:"The instruments and ideas shaping tomorrow.",
-    description:"Scientific innovation, engineering, emerging technologies, research instruments and computing. We examine how new tools are built, what they can measure and where their limits lie.",
+    description:"Spaceflight, engineering, advanced materials, robotics, computing and scientific instruments. We examine how new tools are built, what they can measure, what has actually been demonstrated and where their limits remain.",
     themes:["Spaceflight & aerospace","Scientific instruments","Computing & simulation","Engineering & emerging research"],
     imageQuery:"NASA space telescope engineering spacecraft James Webb", imageAlt:"Space technology image from NASA",
   },
   "universal-record": {
     number:"03", title:"The Universal Record", subtitle:"A considered record of scientific progress.",
-    description:"Discoveries, research announcements, historical milestones, awards and important events. Every story should lead back to its original evidence and clearly distinguish results from interpretation.",
-    themes:["Research announcements","Scientific history","Milestones & awards","Events and the research calendar"],
+    description:"A cross-disciplinary record of discoveries, research announcements, scientific history, milestones and important events. We connect developments across the physical, life, mathematical and computational sciences while distinguishing evidence from interpretation.",
+    themes:["Research announcements","Cross-disciplinary discoveries","Scientific history & milestones","Institutions & major programmes"],
     imageQuery:"NASA scientific discovery astronomy observatory research", imageAlt:"Scientific discovery image from NASA",
   },
 };
@@ -73,10 +74,10 @@ export default async function DepartmentPage({ params }: { params: Promise<{ slu
     : "Publication date not supplied";
 
   return (
-    <main className="oo-department-page">
+    <main className={"oo-department-page oo-department-" + slug}>
       <header className="oo-department-hero">
         <div className="oo-department-hero-copy">
-          <span className="kicker">{department.number} / Editorial department</span>
+          <span className="kicker">{department.number} / ORBIT &amp; ORIGIN · DEPARTMENT</span>
           <h1>{department.title}</h1>
           <p className="oo-department-subtitle">{department.subtitle}</p>
           <p className="muted">{department.description}</p>
@@ -91,10 +92,12 @@ export default async function DepartmentPage({ params }: { params: Promise<{ slu
         {department.themes.map((theme,index)=><span key={theme}><small>0{index+1}</small>{theme}</span>)}
       </section>
 
+      <DepartmentKnowledgeDesk department={slug} />
+
       <section className="oo-digest-section" aria-labelledby="oo-digest-heading">
         <header className="oo-digest-heading">
-          <div><span className="kicker">THE DAILY DESK · PUBLISHED BRIEFINGS</span><h2 id="oo-digest-heading">Latest dispatches.</h2></div>
-          <p className="muted">A visual reading list of the latest stories released by the editorial desk. Each entry links to its complete article and original references.</p>
+          <div><span className="kicker">ORBIT &amp; ORIGIN · EDITORIAL ARCHIVE</span><h2 id="oo-digest-heading">Our own dispatches.</h2></div>
+          <p className="muted">Reporting, explainers and essays written and published by ORBIT &amp; ORIGIN. These editorial articles are kept separate from the live external-source updates above.</p>
         </header>
         {unavailable ? (
           <p className="oo-digest-empty" role="status">The editorial feed is temporarily unavailable. Please return shortly.</p>
