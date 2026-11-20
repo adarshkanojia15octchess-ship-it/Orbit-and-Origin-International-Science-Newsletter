@@ -886,3 +886,170 @@ button:disabled { opacity:.35; cursor:not-allowed; }
   .oo-cosmic-grid { grid-template-columns:1fr; }
   .oo-cosmic-feature { padding:14px; }
 }
+
+
+/* Cosmic Frame — NASA APOD full-resolution image experience */
+.oo-apod-feature {
+  margin:30px 0 38px;
+  padding:clamp(16px,2.4vw,28px);
+  border:1px solid rgba(213,183,127,.34);
+  background:linear-gradient(145deg,rgba(35,62,86,.42),rgba(8,21,36,.82));
+}
+.oo-apod-heading {
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:18px;
+  margin:0 0 20px;
+  padding-bottom:16px;
+  border-bottom:1px solid var(--oo-line);
+}
+.oo-apod-heading h3 {
+  margin:8px 0 0;
+  color:var(--oo-ivory);
+  font:400 clamp(27px,3vw,40px)/1.1 var(--oo-serif);
+}
+.oo-apod-mark {
+  flex:0 0 auto;
+  color:var(--oo-gold);
+  font-size:9px;
+  letter-spacing:.14em;
+  text-align:right;
+}
+.oo-apod-layout {
+  display:grid;
+  grid-template-columns:minmax(0,1.35fr) minmax(280px,.8fr);
+  align-items:start;
+  gap:clamp(22px,3.5vw,42px);
+}
+.oo-apod-art {
+  position:relative;
+  min-width:0;
+  width:100%;
+  height:min(76vh,900px);
+  min-height:340px;
+  overflow:hidden;
+  border:1px solid rgba(180,198,215,.16);
+  background:#050D17;
+}
+.oo-apod-art>a {
+  position:absolute;
+  inset:0;
+  display:block;
+  cursor:zoom-in;
+}
+.oo-apod-art img {
+  object-fit:contain;
+}
+.oo-apod-expand {
+  position:absolute;
+  right:12px;
+  bottom:12px;
+  padding:8px 11px;
+  border:1px solid rgba(213,183,127,.5);
+  background:rgba(5,13,23,.82);
+  color:#F4F1E8;
+  font-size:9px;
+  letter-spacing:.12em;
+  pointer-events:none;
+}
+.oo-apod-no-image {
+  display:flex;
+  min-height:340px;
+  height:100%;
+  padding:30px;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  color:var(--oo-gold);
+  background:#071321;
+}
+.oo-apod-no-image span {
+  font-size:10px;
+  letter-spacing:.16em;
+}
+.oo-apod-no-image p {
+  max-width:420px;
+  color:var(--oo-muted);
+  font-size:12px;
+  line-height:1.8;
+}
+.oo-apod-copy { min-width:0; }
+.oo-apod-date {
+  margin:0 0 10px;
+  color:var(--oo-gold);
+  font-size:9px;
+  letter-spacing:.13em;
+}
+.oo-apod-copy h4 {
+  margin:0 0 16px;
+  color:var(--oo-ivory);
+  font:400 clamp(25px,2.6vw,36px)/1.14 var(--oo-serif);
+  overflow-wrap:anywhere;
+}
+.oo-apod-explanation {
+  color:#C4CDD5;
+  font-size:13px;
+  line-height:1.85;
+  white-space:pre-line;
+}
+.oo-apod-metadata {
+  display:grid;
+  grid-template-columns:1fr;
+  gap:0;
+  margin:22px 0 18px;
+  border-top:1px solid var(--oo-line);
+}
+.oo-apod-metadata>div {
+  display:grid;
+  grid-template-columns:minmax(110px,.72fr) minmax(0,1.28fr);
+  gap:12px;
+  padding:10px 0;
+  border-bottom:1px solid rgba(180,198,215,.12);
+}
+.oo-apod-metadata dt {
+  color:var(--oo-muted);
+  font-size:10px;
+  line-height:1.6;
+}
+.oo-apod-metadata dd {
+  min-width:0;
+  margin:0;
+  color:#E4E8EC;
+  font-size:10px;
+  line-height:1.65;
+  overflow-wrap:anywhere;
+}
+.oo-apod-metadata dd small {
+  display:block;
+  margin-top:4px;
+  color:#91A3B4;
+  font-size:9px;
+}
+.oo-apod-links {
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px 20px;
+  margin-top:18px;
+}
+.oo-apod-note {
+  margin:18px 0 0;
+  padding-top:14px;
+  border-top:1px solid rgba(180,198,215,.12);
+  color:#9EADBA;
+  font-size:10px;
+  line-height:1.8;
+}
+@media(max-width:900px) {
+  .oo-apod-layout { grid-template-columns:1fr; }
+  .oo-apod-art { height:min(72vh,760px); }
+}
+@media(max-width:620px) {
+  .oo-apod-feature { padding:14px; }
+  .oo-apod-heading { align-items:flex-start; flex-direction:column; }
+  .oo-apod-mark { text-align:left; }
+  .oo-apod-art { min-height:260px; height:62vh; }
+  .oo-apod-metadata>div { grid-template-columns:1fr; gap:4px; }
+  .oo-apod-links { flex-direction:column; align-items:flex-start; }
+}
