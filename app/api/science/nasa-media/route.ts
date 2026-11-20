@@ -79,7 +79,7 @@ export async function GET(request: NextRequest) {
       .filter((item): item is NonNullable<ReturnType<typeof normalize>> => item !== null);
     if (!items.length) {
       return NextResponse.json({
-        query: searchTerm, mediaType, page, items: [], featured: null,
+        query: searchTerm, mediaType, page, isDaily: !query, items: [], featured: null,
         total: raw.collection?.metadata?.total_hits || 0,
         source: "NASA Image and Video Library",
         sourceUrl: "https://images.nasa.gov/",
@@ -93,6 +93,7 @@ export async function GET(request: NextRequest) {
       query: searchTerm,
       mediaType,
       page,
+      isDaily: !query,
       items,
       featured,
       total: raw.collection?.metadata?.total_hits || items.length,
