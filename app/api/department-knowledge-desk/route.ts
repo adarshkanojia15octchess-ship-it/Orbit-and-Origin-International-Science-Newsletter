@@ -141,17 +141,20 @@ async function fetchSource(source: FeedSource): Promise<{
         "User-Agent": "ORBIT-AND-ORIGIN-Department-Knowledge-Desk/1.0",
       });
       const parsed = parseArxivFeed(xml);
-      const items = parsed.papers.map((paper) => ({
-        id: source.id + ":" + paper.id,
-        title: paper.title,
-        summary: paper.abstract.slice(0, 620),
-        url: paper.url,
-        publishedAt: paper.submittedAt ? new Date(paper.submittedAt).toISOString() : null,
-        sourceId: source.id,
-        sourceName: source.name,
-        recordType: source.recordType,
-        categories: paper.categories.slice(0, 6),
-      }));
+      const items = parsed.papers.map((paper) => {
+        const submittedTime = paper.submittedAt ? Date.parse(paper.submittedAt) : Number.NaN;
+        return {
+          id: source.id + ":" + paper.id,
+          title: paper.title,
+          summary: paper.abstract.slice(0, 620),
+          url: paper.url,
+          publishedAt: Number.isFinite(submittedTime) ? new Date(submittedTime).toISOString() : null,
+          sourceId: source.id,
+          sourceName: source.name,
+          recordType: source.recordType,
+          categories: paper.categories.slice(0, 6),
+        };
+      });
       return { items, status: "available" };
     }
 
