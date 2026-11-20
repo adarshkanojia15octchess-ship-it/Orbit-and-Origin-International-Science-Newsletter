@@ -3,10 +3,17 @@
 import Image from "next/image";
 import { FormEvent, useEffect, useState } from "react";
 
-type Tab = "apod" | "solar" | "exoplanets" | "papers" | "gaia" | "euclid" | "earth";
-type ApodData = {
-  date: string; title: string; mediaType: string; explanation: string;
-  imageUrl: string | null; alt: string; credit: string; pageUrl: string;
+type Tab = "cosmic" | "solar" | "exoplanets" | "papers" | "gaia" | "euclid" | "earth";
+type CosmicMediaItem = {
+  nasaId: string; title: string; description: string; dateCreated: string | null;
+  mediaType: string; center: string | null; photographer: string | null;
+  secondaryCreator: string | null; location: string | null; keywords: string[];
+  copyright: string | null; imageUrl: string | null; sourceUrl: string;
+};
+type CosmicMediaResponse = {
+  query: string; mediaType: string; page: number; items: CosmicMediaItem[];
+  featured: CosmicMediaItem | null; total: number; source: string;
+  sourceUrl: string; retrievedAt: string;
 };
 type SolarEvent = {
   id: string; type: string; category: "CME" | "FLR"; startTime: string | null;
@@ -59,7 +66,7 @@ const methods = [
 ];
 
 export default function ObservatoryClient() {
-  const [tab, setTab] = useState<Tab>("apod");
+  const [tab, setTab] = useState<Tab>("cosmic");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [retrievedAt, setRetrievedAt] = useState("");
@@ -79,7 +86,10 @@ export default function ObservatoryClient() {
     };
   }, []);
 
-  const [apod, setApod] = useState<ApodData | null>(null);
+  const [cosmicMedia, setCosmicMedia] = useState<CosmicMediaResponse | null>(null);
+  const [mediaSearchDraft, setMediaSearchDraft] = useState("");
+  const [mediaQuery, setMediaQuery] = useState("");
+  const [mediaType, setMediaType] = useState("image");
   const [solarEvents, setSolarEvents] = useState<SolarEvent[]>([]);
   const [solarPartial, setSolarPartial] = useState(false);
   const [closeApproaches, setCloseApproaches] = useState<CloseApproach[]>([]);
@@ -104,21 +114,23 @@ export default function ObservatoryClient() {
   const [crossrefLoading, setCrossrefLoading] = useState("");
 
   useEffect(() => {
-    if (tab !== "apod") return;
+    if (tab !== "cosmic") return;
     const controller = new AbortController();
     setLoading(true);
     setError("");
-    readApi<{ data: ApodData; retrievedAt: string }>("/api/science/apod", controller.signal)
+    const params = new URLSearchParams({ media_type: mediaType });
+    if (mediaQuery) params.set("q", mediaQuery);
+    readApi<CosmicMediaResponse>("/api/science/nasa-media?" + params.toString(), controller.signal)
       .then((result) => {
-        setApod(result.data);
+        setCosmicMedia(result);
         setRetrievedAt(result.retrievedAt);
       })
       .catch((reason: unknown) => {
-        if (!controller.signal.aborted) setError(reason instanceof Error ? reason.message : "NASA APOD is unavailable.");
+        if (!controller.signal.aborted) setError(reason instanceof Error ? reason.message : "NASA's media archive is unavailable.");
       })
       .finally(() => { if (!controller.signal.aborted) setLoading(false); });
     return () => controller.abort();
-  }, [tab, refreshKey]);
+  }, [tab, refreshKey, mediaQuery, mediaType]);
 
   useEffect(() => {
     if (tab !== "solar") return;
@@ -254,7 +266,7 @@ export default function ObservatoryClient() {
   return (
     <section className="oo-observatory-workbench" aria-label="Scientific data tools">
       <div className="oo-observatory-tabs" role="tablist" aria-label="Choose a science tool">
-        <button type="button" role="tab" aria-selected={tab === "apod"} className={tab === "apod" ? "is-active" : ""} onClick={() => setTab("apod")}>NASA · APOD</button>
+        <button type="button" role="tab" aria-selected={tab === "cosmic"} className={tab === "cosmic" ? "is-active" : ""} onClick={() => setTab("cosmic")}>Cosmic Frame</button>
         <button type="button" role="tab" aria-selected={tab === "solar"} className={tab === "solar" ? "is-active" : ""} onClick={() => setTab("solar")}>Solar activity</button>
         <button type="button" role="tab" aria-selected={tab === "exoplanets"} className={tab === "exoplanets" ? "is-active" : ""} onClick={() => setTab("exoplanets")}>Exoplanet Atlas</button>
         <button type="button" role="tab" aria-selected={tab === "papers"} className={tab === "papers" ? "is-active" : ""} onClick={() => setTab("papers")}>Research Radar</button>
@@ -272,30 +284,52 @@ export default function ObservatoryClient() {
       {loading && <p className="oo-observatory-status" role="status">Checking the latest available records from the scientific providers…</p>}
       {error && <p className="oo-observatory-error" role="alert">{error}</p>}
 
-      {tab === "apod" && (
-        <section className="oo-observatory-panel" role="tabpanel" aria-labelledby="oo-apod-title">
+      {tab === "cosmic" && (
+        <section className="oo-observatory-panel" role="tabpanel" aria-labelledby="oo-cosmic-title">
           <div className="oo-observatory-panel-heading">
-            <div><span className="oo-eyebrow">NASA · ASTRONOMY PICTURE OF THE DAY</span><h2 id="oo-apod-title">A window on the Universe.</h2></div>
-            <span className="oo-observatory-source-mark">NASA</span>
+            <div><span className="oo-eyebrow">ORBIT &amp; ORIGIN · NASA MEDIA LIBRARY</span><h2 id="oo-cosmic-title">The Cosmic Frame.</h2></div>
+            <span className="oo-observatory-source-mark">DAILY DISCOVERY</span>
           </div>
-          {apod && (
-            <div className="oo-apod-layout">
-              <div className="oo-apod-art">
-                {apod.imageUrl ? (
-                  <Image src={apod.imageUrl} alt={apod.alt} width={1200} height={900} sizes="(max-width: 800px) 100vw, 60vw" />
-                ) : (
-                  <div className="oo-observatory-placeholder"><span>{apod.mediaType.toUpperCase()}</span><p>This entry is not a still image, or NASA did not supply a full-size image. Open the original NASA feature to view its media.</p></div>
-                )}
+          <p className="oo-cosmic-intro">A daily window into the NASA image and video archive, selected by ORBIT &amp; ORIGIN. Explore the original media, its metadata and the people and missions behind it.</p>
+          {cosmicMedia?.featured && (
+            <article className="oo-cosmic-feature">
+              <div className="oo-cosmic-feature-art">
+                {cosmicMedia.featured.imageUrl ? (
+                  <Image src={cosmicMedia.featured.imageUrl} alt={cosmicMedia.featured.title} width={1600} height={1100} sizes="(max-width: 900px) 100vw, 65vw" />
+                ) : <div className="oo-observatory-placeholder"><span>{cosmicMedia.featured.mediaType.toUpperCase()}</span><p>Open the original NASA record to view this media.</p></div>}
               </div>
-              <div className="oo-apod-copy">
-                <p className="oo-observatory-date">{dateLabel(apod.date)} · NASA APOD</p>
-                <h3>{apod.title}</h3>
-                <p>{apod.explanation}</p>
-                {apod.credit && <p className="oo-observatory-credit">Image credit: {apod.credit}</p>}
-                <a className="oo-observatory-text-link" href={apod.pageUrl} target="_blank" rel="noreferrer">Open the original NASA feature ↗</a>
+              <div className="oo-cosmic-feature-copy">
+                <p className="oo-observatory-date">TODAY'S COSMIC FRAME · {dateLabel(cosmicMedia.featured.dateCreated)}</p>
+                <h3>{cosmicMedia.featured.title}</h3>
+                <p>{cosmicMedia.featured.description || "NASA's archive record does not include a description."}</p>
+                {cosmicMedia.featured.center && <p className="oo-observatory-credit">NASA centre · {cosmicMedia.featured.center}</p>}
+                {cosmicMedia.featured.photographer && <p className="oo-observatory-credit">Photographer · {cosmicMedia.featured.photographer}</p>}
+                {cosmicMedia.featured.secondaryCreator && <p className="oo-observatory-credit">Additional credit · {cosmicMedia.featured.secondaryCreator}</p>}
+                {cosmicMedia.featured.copyright && <p className="oo-observatory-credit">Copyright notice · {cosmicMedia.featured.copyright}</p>}
+                <a className="oo-observatory-text-link" href={cosmicMedia.featured.sourceUrl} target="_blank" rel="noreferrer">Open original NASA media record ↗</a>
               </div>
-            </div>
+            </article>
           )}
+          <form className="oo-observatory-filters oo-cosmic-search" onSubmit={(event) => { event.preventDefault(); setMediaQuery(mediaSearchDraft.trim()); }}>
+            <label>Search NASA's archive<input value={mediaSearchDraft} onChange={(event) => setMediaSearchDraft(event.target.value)} maxLength={100} placeholder="e.g. Voyager 1, nebula, Saturn, Apollo 11" /></label>
+            <label>Media type<select value={mediaType} onChange={(event) => setMediaType(event.target.value)}><option value="image">Images</option><option value="video">Videos</option><option value="audio">Audio</option></select></label>
+            <button type="submit">Search archive ↗</button>
+          </form>
+          {cosmicMedia && <p className="oo-observatory-results-count">Showing {cosmicMedia.items.length} records from {cosmicMedia.total.toLocaleString()} NASA archive results for “{cosmicMedia.query}”.</p>}
+          <div className="oo-cosmic-grid">
+            {cosmicMedia?.items.filter((item) => item.nasaId !== cosmicMedia.featured?.nasaId).slice(0, 12).map((item) => (
+              <article className="oo-cosmic-card" key={item.nasaId}>
+                {item.imageUrl ? <a href={item.sourceUrl} target="_blank" rel="noreferrer" aria-label={"Open NASA record: " + item.title}><Image src={item.imageUrl} alt={item.title} width={640} height={480} sizes="(max-width: 700px) 100vw, 33vw" /></a> : <div className="oo-cosmic-card-placeholder">{item.mediaType.toUpperCase()}</div>}
+                <div className="oo-cosmic-card-copy">
+                  <span className="oo-eyebrow">{item.center || "NASA ARCHIVE"} · {dateLabel(item.dateCreated)}</span>
+                  <h3><a href={item.sourceUrl} target="_blank" rel="noreferrer">{item.title}</a></h3>
+                  {item.photographer && <p>Credit: {item.photographer}</p>}
+                </div>
+              </article>
+            ))}
+          </div>
+          <p className="oo-observatory-note">This is an independently curated discovery feature using NASA's searchable media archive, not an official NASA APOD publication. Archive records may include third-party copyrighted material; check each record's rights and credit information before republication. The daily selection is automated and should receive editorial review before being featured in a newsletter.</p>
+          <a className="oo-observatory-text-link" href="https://images.nasa.gov/" target="_blank" rel="noreferrer">Explore the complete NASA Image and Video Library ↗</a>
         </section>
       )}
 
