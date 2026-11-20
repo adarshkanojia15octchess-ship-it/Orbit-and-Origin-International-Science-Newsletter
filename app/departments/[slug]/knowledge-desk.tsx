@@ -225,7 +225,11 @@ export default function DepartmentKnowledgeDesk({ department }: Props) {
         </label>
       </div>
 
-      {error && !data ? (
+      {error && data ? (
+        <p className="oo-knowledge-stale-note" role="status">
+          The latest refresh did not complete: {error}. The previously retrieved source records remain visible.
+        </p>
+      ) : error && !data ? (
         <div className="oo-knowledge-empty" role="alert">
           <strong>The Knowledge Desk could not connect.</strong>
           <p>{error}</p>
