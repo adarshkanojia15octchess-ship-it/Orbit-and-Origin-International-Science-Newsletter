@@ -44,7 +44,8 @@ Requirements: Node.js 20.9+ and npm.
 
 The public `/observatory` section provides server-mediated research tools for:
 
-- NASA Astronomy Picture of the Day through the current `science.nasa.gov` APOD Basic endpoint.
+- ORBIT & ORIGIN's **Cosmic Frame**, a daily rotating editorial discovery and searchable image/video/audio browser powered by the NASA Image and Video Library API.
+- NASA Astronomy Picture of the Day through the current `science.nasa.gov` APOD Basic endpoint (retained as a provider integration, but no longer the Observatory's lead visual feature).
 - NASA DONKI coronal mass ejection and solar-flare event records.
 - NASA Exoplanet Archive Planetary Systems Composite Parameters through TAP/ADQL.
 - arXiv research preprints, with optional Crossref publication-metadata candidates.
@@ -60,7 +61,7 @@ The Observatory displays source links and retrieval times. arXiv records are lab
 
 The Observatory browser automatically rechecks the active panel every 15 minutes while visible and when the reader returns to the tab; readers can also request a manual check. Server-side provider caching limits redundant upstream traffic: USGS 60 seconds, NASA DONKI 5 minutes, arXiv 15 minutes, APOD and JPL close approaches 1 hour, Gaia and the Exoplanet Archive 6 hours, Euclid metadata 12 hours, and NASA GIBS imagery 6 hours. These intervals are refresh policies, not promises that every scientific catalogue changes that frequently. Gaia DR3 is a fixed data release, Euclid records appear as the archive releases them, and observation dates must not be confused with the time ORBIT & ORIGIN checked the provider. The interface labels its own check time separately and links to source records for authoritative timestamps.
 
-The APOD integration uses `https://science.nasa.gov/wp-json/wp/v2/apod-basic` rather than the retiring legacy APOD endpoint. The Exoplanet Atlas uses a bounded query of `pscomppars`. arXiv searches return at most 20 records and use a three-second in-process spacing queue; serverless instances do not share in-memory state, so provider usage still requires monitoring.
+The retained APOD integration uses `https://science.nasa.gov/wp-json/wp/v2/apod-basic` rather than the retiring legacy APOD endpoint. The Observatory's lead visual experience is now Cosmic Frame, backed by NASA's unauthenticated `https://images-api.nasa.gov/search` endpoint. It rotates a daily topic and automatically selects one record from the returned archive results; this is a discovery prompt, not a human-curated or editorially endorsed selection. Readers can search by media type. Video and audio results link to their NASA records, and a playable embedded preview is not guaranteed. Verify each item's record-level credit and copyright notice before any republication. The Exoplanet Atlas uses a bounded query of `pscomppars`. arXiv searches return at most 20 records and use a three-second in-process spacing queue; serverless instances do not share in-memory state, so provider usage still requires monitoring.
 
 The Stellar Census makes a bounded Gaia DR3 query for high-signal-to-noise positive parallaxes. Its displayed distance is the simple inverse-parallax value and is explicitly labelled as an approximation. The Euclid panel queries the public `ivoa.obscore` metadata table; it does not download large science products. The Earth Monitor uses USGS' documented GeoJSON summary feeds and NASA GIBS WMS imagery. The asteroid panel requests at most 20 JPL close-approach records within 0.05 au over 60 days and caches the response for one hour. JPL asks clients to avoid excessive or redundant requests and to cache results.
 
