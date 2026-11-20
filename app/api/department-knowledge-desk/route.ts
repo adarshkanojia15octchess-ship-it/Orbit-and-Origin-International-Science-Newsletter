@@ -53,9 +53,10 @@ const DEPARTMENTS: Record<DepartmentKey, {
         allowedHosts: ["esa.int"], recordType: "Agency news release",
       },
       {
-        id: "jpl-news", name: "NASA Jet Propulsion Laboratory", type: "rss",
-        feedUrl: "https://www.jpl.nasa.gov/feeds/news/", homeUrl: "https://www.jpl.nasa.gov/",
-        allowedHosts: ["jpl.nasa.gov"], recordType: "Research and mission news",
+        id: "nasa-jpl-centre", name: "NASA/JPL Centre News", type: "rss",
+        feedUrl: "https://www.nasa.gov/centers-and-facilities/jpl/feed/",
+        homeUrl: "https://www.nasa.gov/centers-and-facilities/jpl/",
+        allowedHosts: ["nasa.gov"], recordType: "JPL centre research and mission update",
       },
       {
         id: "arxiv-astrophysics", name: "arXiv · Astrophysics", type: "arxiv",
@@ -73,12 +74,14 @@ const DEPARTMENTS: Record<DepartmentKey, {
       {
         id: "nasa-technology", name: "NASA Technology", type: "rss",
         feedUrl: "https://www.nasa.gov/technology/feed/", homeUrl: "https://www.nasa.gov/technology/",
-        allowedHosts: ["nasa.gov"], recordType: "Technology news",
+        allowedHosts: ["nasa.gov"], recordType: "Technology and engineering update",
+        includePattern: /\\b(technology|technolog(?:y|ies)|robot(?:ic|ics)?|artificial intelligence|\\bAI\\b|quantum|material(?:s)?|comput(?:er|ing)|semiconductor|chip|instrument|satellite relay|satellite communication|propulsion|sensor|laser|spacecraft|nuclear power|navigation system|engineering|3D maps|space reactor|CASALS|Ka-band|communications capability)\\b/i,
       },
       {
         id: "nasa-aeronautics", name: "NASA Aeronautics", type: "rss",
         feedUrl: "https://www.nasa.gov/aeronautics/feed/", homeUrl: "https://www.nasa.gov/aeronautics/",
-        allowedHosts: ["nasa.gov"], recordType: "Aeronautics research update",
+        allowedHosts: ["nasa.gov"], recordType: "Aeronautics and flight-research update",
+        includePattern: /\\b(aeronautic(?:s)?|aircraft|aviation|flight research|supersonic|propulsion|aerospace|wind tunnel|experimental aircraft|aerodynamic|drone|helicopter|planetary landing|navigation experiment|X-59|Mars helicopter|quiet supersonic)\\b/i,
       },
       {
         id: "nsf-technology", name: "U.S. National Science Foundation", type: "rss",
@@ -105,9 +108,9 @@ const DEPARTMENTS: Record<DepartmentKey, {
         allowedHosts: ["nsf.gov", "govdelivery.com"], recordType: "Research announcement",
       },
       {
-        id: "nasa-news", name: "NASA News Releases", type: "rss",
+        id: "nasa-news", name: "NASA News & Updates", type: "rss",
         feedUrl: "https://www.nasa.gov/news-release/feed/", homeUrl: "https://www.nasa.gov/news/",
-        allowedHosts: ["nasa.gov"], recordType: "Agency news release",
+        allowedHosts: ["nasa.gov"], recordType: "Agency news and feature update",
       },
       {
         id: "arxiv-cross-disciplinary", name: "arXiv · Cross-disciplinary research", type: "arxiv",
