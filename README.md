@@ -75,13 +75,13 @@ The live feed aggregator is `/api/department-knowledge-desk?department=<departme
 
 | Department | Sources |
 | --- | --- |
-| Tapestry of Worlds | NASA Science, ESA Top News, NASA/JPL News, arXiv Astrophysics |
-| Frontier Tech | NASA Technology, NASA Aeronautics, U.S. National Science Foundation news filtered for technology/engineering topics, arXiv computing and systems categories |
-| The Universal Record | U.S. National Science Foundation news, NASA News Releases, arXiv cross-disciplinary physics, mathematics, biology, statistics and quantitative-finance categories |
+| Tapestry of Worlds | NASA Science, ESA Top News, the NASA-hosted JPL centre feed, arXiv Astrophysics |
+| Frontier Tech | NASA Technology and Aeronautics feeds filtered for engineering, instruments, aircraft and flight-research topics; NSF research/innovation news; arXiv computing and systems categories |
+| The Universal Record | NSF research announcements, NASA News & Updates, arXiv cross-disciplinary physics, mathematics, biology, statistics and quantitative-finance categories |
 
 The desk checks sources independently, reports partial provider failures rather than hiding them, and links each record to its publisher. Results are ordered by the publication timestamp supplied by the source; missing or invalid dates remain undisclosed rather than inferred. Feed responses use a 15-minute server cache, and the page offers a manual refresh and periodic refresh while visible.
 
-RSS/Atom article links must use HTTPS and match that publisher's configured host allow-list. The parser strips HTML from display summaries and limits item text length. The source feed URLs and publisher homepages remain visible in the desk.
+RSS/Atom article links must use HTTPS and match that publisher's configured host allow-list. The parser strips HTML from display summaries and limits item text length. The direct JPL RSS host returned HTTP 403 from the Vercel runtime, so Tapestry of Worlds uses NASA's JPL centre feed mirror under nasa.gov instead. NASA Technology and Aeronautics streams are filtered for relevant technical topics because the agency-wide feeds can also include unrelated features. NASA News & Updates is labelled broadly because that feed can contain both agency news and science features. The source feed URLs and publisher homepages remain visible in the desk.
 
 **Evidence labels matter:** NASA/ESA/NSF/JPL news items are institutional announcements or research updates, not automatic independent peer review. arXiv records are explicitly labelled as preprints and are not represented as peer-reviewed papers merely because they appear in the desk. A source record is a path to the original material, not an ORBIT & ORIGIN endorsement. Read the paper, technical report or linked source before drawing conclusions.
 
