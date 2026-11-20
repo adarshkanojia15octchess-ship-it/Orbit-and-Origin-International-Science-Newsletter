@@ -67,6 +67,26 @@ The Stellar Census makes a bounded Gaia DR3 query for high-signal-to-noise posit
 
 All new provider calls are server-mediated. Gaia and Euclid TAP queries are bounded synchronous queries; larger analyses should use the archives' asynchronous interfaces or their science portals. NASA ADS is not enabled in this phase because it requires a separately provisioned private API token; arXiv and Crossref remain the public literature services.
 
+## Department Knowledge Desks
+
+Each public department page has a **Department Knowledge Desk** above the ORBIT & ORIGIN editorial archive. The desk presents source-published updates separately from articles written and published by ORBIT & ORIGIN.
+
+The live feed aggregator is `/api/department-knowledge-desk?department=<department-slug>`. It uses server-side RSS/Atom parsing and the arXiv Atom API. The current source map is:
+
+| Department | Sources |
+| --- | --- |
+| Tapestry of Worlds | NASA Science, ESA Top News, NASA/JPL News, arXiv Astrophysics |
+| Frontier Tech | NASA Technology, NASA Aeronautics, U.S. National Science Foundation news filtered for technology/engineering topics, arXiv computing and systems categories |
+| The Universal Record | U.S. National Science Foundation news, NASA News Releases, arXiv cross-disciplinary physics, mathematics, biology, statistics and quantitative-finance categories |
+
+The desk checks sources independently, reports partial provider failures rather than hiding them, and links each record to its publisher. Results are ordered by the publication timestamp supplied by the source; missing or invalid dates remain undisclosed rather than inferred. Feed responses use a 15-minute server cache, and the page offers a manual refresh and periodic refresh while visible.
+
+RSS/Atom article links must use HTTPS and match that publisher's configured host allow-list. The parser strips HTML from display summaries and limits item text length. The source feed URLs and publisher homepages remain visible in the desk.
+
+**Evidence labels matter:** NASA/ESA/NSF/JPL news items are institutional announcements or research updates, not automatic independent peer review. arXiv records are explicitly labelled as preprints and are not represented as peer-reviewed papers merely because they appear in the desk. A source record is a path to the original material, not an ORBIT & ORIGIN endorsement. Read the paper, technical report or linked source before drawing conclusions.
+
+The arXiv integration uses the existing in-process spacing queue to reduce repeated requests. Serverless instances do not share in-memory state; provider usage and feed availability still require monitoring. This is a curated source map, not an exhaustive index of all global science news.
+
 ## Supabase setup
 
 Create a Supabase project and configure:
