@@ -288,18 +288,18 @@ export default function ObservatoryClient() {
         <section className="oo-observatory-panel" role="tabpanel" aria-labelledby="oo-cosmic-title">
           <div className="oo-observatory-panel-heading">
             <div><span className="oo-eyebrow">ORBIT &amp; ORIGIN · NASA MEDIA LIBRARY</span><h2 id="oo-cosmic-title">The Cosmic Frame.</h2></div>
-            <span className="oo-observatory-source-mark">DAILY DISCOVERY</span>
+            <span className="oo-observatory-source-mark">AUTOMATED DAILY PICK</span>
           </div>
-          <p className="oo-cosmic-intro">A daily window into the NASA image and video archive, selected by ORBIT &amp; ORIGIN. Explore the original media, its metadata and the people and missions behind it.</p>
+          <p className="oo-cosmic-intro">A daily window into NASA’s image, video and audio archive. An archive item is selected automatically each day; it is a discovery prompt, not a human-reviewed editorial recommendation. Explore the original record, its metadata and the people and missions behind it.</p>
           {cosmicMedia?.featured && (
             <article className="oo-cosmic-feature">
               <div className="oo-cosmic-feature-art">
                 {cosmicMedia.featured.imageUrl ? (
                   <Image src={cosmicMedia.featured.imageUrl} alt={cosmicMedia.featured.title} width={1600} height={1100} sizes="(max-width: 900px) 100vw, 65vw" />
-                ) : <div className="oo-observatory-placeholder"><span>{cosmicMedia.featured.mediaType.toUpperCase()}</span><p>Open the original NASA record to view this media.</p></div>}
+                ) : <div className="oo-observatory-placeholder"><span>{cosmicMedia.featured.mediaType.toUpperCase()} PREVIEW</span><p>A preview is not available here. Open the original NASA record to view or listen to this item.</p></div>}
               </div>
               <div className="oo-cosmic-feature-copy">
-                <p className="oo-observatory-date">TODAY'S COSMIC FRAME · {dateLabel(cosmicMedia.featured.dateCreated)}</p>
+                <p className="oo-observatory-date">TODAY’S COSMIC FRAME · AUTOMATED ARCHIVE SELECTION · {dateLabel(cosmicMedia.featured.dateCreated)}</p>
                 <h3>{cosmicMedia.featured.title}</h3>
                 <p>{cosmicMedia.featured.description || "NASA's archive record does not include a description."}</p>
                 {cosmicMedia.featured.center && <p className="oo-observatory-credit">NASA centre · {cosmicMedia.featured.center}</p>}
@@ -319,7 +319,7 @@ export default function ObservatoryClient() {
           <div className="oo-cosmic-grid">
             {cosmicMedia?.items.filter((item) => item.nasaId !== cosmicMedia.featured?.nasaId).slice(0, 12).map((item) => (
               <article className="oo-cosmic-card" key={item.nasaId}>
-                {item.imageUrl ? <a href={item.sourceUrl} target="_blank" rel="noreferrer" aria-label={"Open NASA record: " + item.title}><Image src={item.imageUrl} alt={item.title} width={640} height={480} sizes="(max-width: 700px) 100vw, 33vw" /></a> : <div className="oo-cosmic-card-placeholder">{item.mediaType.toUpperCase()}</div>}
+                {item.imageUrl ? <a href={item.sourceUrl} target="_blank" rel="noreferrer" aria-label={"Open NASA record: " + item.title}><Image src={item.imageUrl} alt={item.title} width={640} height={480} sizes="(max-width: 700px) 100vw, 33vw" /></a> : <div className="oo-cosmic-card-placeholder">{item.mediaType.toUpperCase()} · OPEN RECORD</div>}
                 <div className="oo-cosmic-card-copy">
                   <span className="oo-eyebrow">{item.center || "NASA ARCHIVE"} · {dateLabel(item.dateCreated)}</span>
                   <h3><a href={item.sourceUrl} target="_blank" rel="noreferrer">{item.title}</a></h3>
@@ -328,7 +328,7 @@ export default function ObservatoryClient() {
               </article>
             ))}
           </div>
-          <p className="oo-observatory-note">This is an independently curated discovery feature using NASA's searchable media archive, not an official NASA APOD publication. Archive records may include third-party copyrighted material; check each record's rights and credit information before republication. The daily selection is automated and should receive editorial review before being featured in a newsletter.</p>
+          <p className="oo-observatory-note">Cosmic Frame is an independent ORBIT &amp; ORIGIN discovery feature using NASA’s searchable media archive; it is not an official NASA APOD publication. The daily item is selected automatically and has not necessarily been reviewed by an editor. Treat it as a starting point for exploration, not as an editorial endorsement. Before republishing any item in a newsletter, inspect its original record, verify the credit and rights information, and check for third-party copyright restrictions. Video and audio entries link to their NASA records; an embedded playable preview is not guaranteed.</p>
           <a className="oo-observatory-text-link" href="https://images.nasa.gov/" target="_blank" rel="noreferrer">Explore the complete NASA Image and Video Library ↗</a>
         </section>
       )}
