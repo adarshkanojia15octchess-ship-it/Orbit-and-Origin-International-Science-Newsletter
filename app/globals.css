@@ -1449,3 +1449,13 @@ button:disabled { opacity:.35; cursor:not-allowed; }
   .oo-knowledge-card-meta { flex-direction:column; gap:4px; }
   .oo-knowledge-card-meta time { text-align:left; }
 }
+
+.oo-knowledge-stale-note {
+  margin:12px 0;
+  padding:11px 13px;
+  border-left:2px solid #D9A66E;
+  background:rgba(217,166,110,.08);
+  color:#D9C3A8;
+  font-size:10px;
+  line-height:1.7;
+}
