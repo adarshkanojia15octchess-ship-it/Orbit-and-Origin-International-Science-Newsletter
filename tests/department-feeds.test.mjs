@@ -34,12 +34,14 @@ test("Atom parser reads alternate hrefs, published dates and namespaced content"
       <link rel="alternate" type="text/html" href="https://example.org/research/materials"/>
       <published>2026-11-19T16:00:00Z</published>
       <summary>Scientists describe a new materials result.</summary>
+      <category term="astro-ph.GA" scheme="https://arxiv.org/schemas/atom"/>
     </entry>
   </feed>`;
   const items = parseSyndicationFeed(xml, options);
   assert.equal(items.length, 1);
   assert.equal(items[0].url, "https://example.org/research/materials");
   assert.equal(items[0].publishedAt, "2026-11-19T16:00:00.000Z");
+  assert.deepEqual(items[0].categories, ["astro-ph.GA"]);
 });
 
 test("parser rejects non-HTTPS and off-domain article links", () => {
