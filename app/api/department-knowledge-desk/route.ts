@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { fetchText } from "@/lib/science/http";
+import { fetchText, safeExternalUrl } from "@/lib/science/http";
 import { parseArxivFeed } from "@/lib/science/normalizers.mjs";
 import { parseSyndicationFeed } from "@/lib/science/feed-parser.mjs";
 import { waitForArxivSlot } from "@/lib/science/arxiv-throttle";
@@ -141,19 +141,21 @@ async function fetchSource(source: FeedSource): Promise<{
         "User-Agent": "ORBIT-AND-ORIGIN-Department-Knowledge-Desk/1.0",
       });
       const parsed = parseArxivFeed(xml);
-      const items = parsed.papers.map((paper) => {
+      const items = parsed.papers.flatMap((paper) => {
+        const url = safeExternalUrl(paper.url, ["arxiv.org"]);
+        if (!url) return [];
         const submittedTime = paper.submittedAt ? Date.parse(paper.submittedAt) : Number.NaN;
-        return {
+        return [{
           id: source.id + ":" + paper.id,
           title: paper.title,
           summary: paper.abstract.slice(0, 620),
-          url: paper.url,
+          url,
           publishedAt: Number.isFinite(submittedTime) ? new Date(submittedTime).toISOString() : null,
           sourceId: source.id,
           sourceName: source.name,
           recordType: source.recordType,
           categories: paper.categories.slice(0, 6),
-        };
+        }];
       });
       return { items, status: "available" };
     }
