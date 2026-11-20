@@ -301,7 +301,7 @@ export default function ObservatoryClient() {
               <div className="oo-cosmic-feature-copy">
                 <p className="oo-observatory-date">TODAY’S COSMIC FRAME · AUTOMATED ARCHIVE SELECTION · {dateLabel(cosmicMedia.featured.dateCreated)}</p>
                 <h3>{cosmicMedia.featured.title}</h3>
-                <p>{cosmicMedia.featured.description || "NASA's archive record does not include a description."}</p>
+                <p>{cosmicMedia.featured.description || "NASA’s archive record does not include a description."}</p>
                 {cosmicMedia.featured.center && <p className="oo-observatory-credit">NASA centre · {cosmicMedia.featured.center}</p>}
                 {cosmicMedia.featured.photographer && <p className="oo-observatory-credit">Photographer · {cosmicMedia.featured.photographer}</p>}
                 {cosmicMedia.featured.secondaryCreator && <p className="oo-observatory-credit">Additional credit · {cosmicMedia.featured.secondaryCreator}</p>}
@@ -311,7 +311,7 @@ export default function ObservatoryClient() {
             </article>
           )}
           <form className="oo-observatory-filters oo-cosmic-search" onSubmit={(event) => { event.preventDefault(); setMediaQuery(mediaSearchDraft.trim()); }}>
-            <label>Search NASA's archive<input value={mediaSearchDraft} onChange={(event) => setMediaSearchDraft(event.target.value)} maxLength={100} placeholder="e.g. Voyager 1, nebula, Saturn, Apollo 11" /></label>
+            <label>Search NASA’s archive<input value={mediaSearchDraft} onChange={(event) => setMediaSearchDraft(event.target.value)} maxLength={100} placeholder="e.g. Voyager 1, nebula, Saturn, Apollo 11" /></label>
             <label>Media type<select value={mediaType} onChange={(event) => setMediaType(event.target.value)}><option value="image">Images</option><option value="video">Videos</option><option value="audio">Audio</option></select></label>
             <button type="submit">Search archive ↗</button>
           </form>
