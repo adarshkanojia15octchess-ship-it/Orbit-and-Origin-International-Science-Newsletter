@@ -15,6 +15,15 @@ type CosmicMediaResponse = {
   featured: CosmicMediaItem | null; total: number; source: string;
   sourceUrl: string; retrievedAt: string;
 };
+type ApodData = {
+  date: string; title: string; mediaType: string; explanation: string;
+  imageUrl: string | null; imageResolution: string | null; alt: string;
+  credit: string; copyright: string; pageUrl: string; publishedAt: string | null;
+  captureTime: string | null;
+};
+type ApodResponse = {
+  data: ApodData; source: string; sourceUrl: string; retrievedAt: string;
+};
 type SolarEvent = {
   id: string; type: string; category: "CME" | "FLR"; startTime: string | null;
   peakTime: string | null; endTime: string | null; classification: string | null;
@@ -55,6 +64,25 @@ function dateLabel(value: string | null | undefined) {
   return Number.isNaN(date.getTime()) ? value : date.toLocaleDateString("en", { year: "numeric", month: "short", day: "numeric", timeZone: "UTC" });
 }
 
+function instantLabel(value: string | null | undefined) {
+  if (!value) return "Not supplied";
+  const instant = new Date(value);
+  if (Number.isNaN(instant.getTime())) return value;
+  return new Intl.DateTimeFormat(undefined, {
+    year: "numeric", month: "short", day: "numeric",
+    hour: "numeric", minute: "2-digit", second: "2-digit",
+    timeZoneName: "short",
+  }).format(instant);
+}
+
+function utcInstantLabel(value: string | null | undefined) {
+  if (!value) return "Not supplied";
+  const instant = new Date(value);
+  return Number.isNaN(instant.getTime())
+    ? value
+    : instant.toISOString().replace("T", " ").replace("Z", " UTC");
+}
+
 function numberLabel(value: number | null, suffix = "") {
   return value === null ? "Not reported" : new Intl.NumberFormat("en", { maximumFractionDigits: 3 }).format(value) + suffix;
 }
@@ -87,6 +115,10 @@ export default function ObservatoryClient() {
   }, []);
 
   const [cosmicMedia, setCosmicMedia] = useState<CosmicMediaResponse | null>(null);
+  const [apod, setApod] = useState<ApodResponse | null>(null);
+  const [apodLoading, setApodLoading] = useState(false);
+  const [apodError, setApodError] = useState("");
+  const [apodImagePixels, setApodImagePixels] = useState("");
   const [mediaSearchDraft, setMediaSearchDraft] = useState("");
   const [mediaQuery, setMediaQuery] = useState("");
   const [mediaType, setMediaType] = useState("image");
@@ -131,6 +163,27 @@ export default function ObservatoryClient() {
       .finally(() => { if (!controller.signal.aborted) setLoading(false); });
     return () => controller.abort();
   }, [tab, refreshKey, mediaQuery, mediaType]);
+
+  useEffect(() => {
+    if (tab !== "cosmic") return;
+    const controller = new AbortController();
+    setApodLoading(true);
+    setApodError("");
+    readApi<ApodResponse>("/api/science/apod", controller.signal)
+      .then((result) => {
+        setApod(result);
+        setApodImagePixels("");
+      })
+      .catch((reason: unknown) => {
+        if (!controller.signal.aborted) {
+          setApodError(reason instanceof Error ? reason.message : "NASA APOD is temporarily unavailable.");
+        }
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setApodLoading(false);
+      });
+    return () => controller.abort();
+  }, [tab, refreshKey]);
 
   useEffect(() => {
     if (tab !== "solar") return;
@@ -291,6 +344,102 @@ export default function ObservatoryClient() {
             <span className="oo-observatory-source-mark">AUTOMATED DAILY PICK</span>
           </div>
           <p className="oo-cosmic-intro">A daily window into NASA’s image, video and audio archive. An archive item is selected automatically each day; it is a discovery prompt, not a human-reviewed editorial recommendation. Explore the original record, its metadata and the people and missions behind it.</p>
+
+          <section className="oo-apod-feature" aria-labelledby="oo-apod-title">
+            <div className="oo-apod-heading">
+              <div>
+                <span className="oo-eyebrow">NASA · ASTRONOMY PICTURE OF THE DAY</span>
+                <h3 id="oo-apod-title">The universe, today.</h3>
+              </div>
+              <span className="oo-apod-mark">FULL-RESOLUTION VIEWER</span>
+            </div>
+            {apodLoading && !apod && <p className="oo-observatory-status">Loading NASA’s daily astronomy feature…</p>}
+            {apodError && <p className="oo-observatory-note" role="status">NASA APOD could not be refreshed: {apodError}. The NASA archive browser remains available below.</p>}
+            {apod?.data && (
+              <>
+                <div className="oo-apod-layout">
+                  <div className="oo-apod-art">
+                    {apod.data.imageUrl ? (
+                      <a href={apod.data.imageUrl} target="_blank" rel="noreferrer" aria-label="Open the original full-size NASA APOD image">
+                        <Image
+                          src={apod.data.imageUrl}
+                          alt={apod.data.alt || apod.data.title}
+                          fill
+                          sizes="(max-width: 900px) 100vw, 68vw"
+                          unoptimized
+                          priority
+                          onLoad={(event) => {
+                            const image = event.currentTarget;
+                            if (image.naturalWidth > 0 && image.naturalHeight > 0) {
+                              setApodImagePixels(
+                                new Intl.NumberFormat("en").format(image.naturalWidth) +
+                                " × " +
+                                new Intl.NumberFormat("en").format(image.naturalHeight) +
+                                " px",
+                              );
+                            }
+                          }}
+                        />
+                        <span className="oo-apod-expand">OPEN ORIGINAL IMAGE ↗</span>
+                      </a>
+                    ) : (
+                      <div className="oo-apod-no-image">
+                        <span>{apod.data.mediaType.toUpperCase()} FEATURE</span>
+                        <p>This APOD entry does not provide a separate full-size image. Open NASA’s page for the original presentation.</p>
+                      </div>
+                    )}
+                  </div>
+                  <div className="oo-apod-copy">
+                    <p className="oo-apod-date">NASA APOD · {dateLabel(apod.data.date)}</p>
+                    <h4>{apod.data.title}</h4>
+                    <p className="oo-apod-explanation">{apod.data.explanation || "NASA has not supplied an explanation for this entry."}</p>
+                    {(apod.data.credit || apod.data.copyright) && (
+                      <p className="oo-observatory-credit">
+                        Image credit · {apod.data.credit || apod.data.copyright}
+                      </p>
+                    )}
+                    {apod.data.copyright && apod.data.credit && apod.data.copyright !== apod.data.credit && (
+                      <p className="oo-observatory-credit">Copyright · {apod.data.copyright}</p>
+                    )}
+                    <dl className="oo-apod-metadata">
+                      <div>
+                        <dt>APOD date</dt>
+                        <dd><time dateTime={apod.data.date}>{dateLabel(apod.data.date)}</time></dd>
+                      </div>
+                      <div>
+                        <dt>NASA publication time · reader’s local zone</dt>
+                        <dd>
+                          {apod.data.publishedAt
+                            ? <><time dateTime={apod.data.publishedAt}>{instantLabel(apod.data.publishedAt)}</time><small>UTC · {utcInstantLabel(apod.data.publishedAt)}</small></>
+                            : "Exact publication time is not present in the returned RSS record."}
+                        </dd>
+                      </div>
+                      <div>
+                        <dt>Original image dimensions</dt>
+                        <dd>{apod.data.imageUrl ? (apodImagePixels || "Reading native image dimensions…") : "No still-image file supplied"}</dd>
+                      </div>
+                      <div>
+                        <dt>Capture / exposure time</dt>
+                        <dd>Not supplied in the APOD feed</dd>
+                      </div>
+                      <div>
+                        <dt>Archive checked</dt>
+                        <dd><time dateTime={apod.retrievedAt}>{instantLabel(apod.retrievedAt)}</time></dd>
+                      </div>
+                    </dl>
+                    <div className="oo-apod-links">
+                      {apod.data.imageUrl && <a className="oo-observatory-text-link" href={apod.data.imageUrl} target="_blank" rel="noreferrer">Open full-size image ↗</a>}
+                      <a className="oo-observatory-text-link" href={apod.data.pageUrl} target="_blank" rel="noreferrer">Open NASA APOD entry ↗</a>
+                    </div>
+                  </div>
+                </div>
+                <p className="oo-apod-note">
+                  The viewer uses NASA’s supplied full-size image URL directly, without Next.js thumbnail resizing or image cropping. Actual pixel dimensions are read from the loaded file; not every APOD is 4K. The APOD calendar date is distinct from its publication timestamp, and neither should be mistaken for the image’s exposure time.
+                </p>
+              </>
+            )}
+          </section>
+
           {cosmicMedia?.featured && (
             <article className="oo-cosmic-feature">
               <div className="oo-cosmic-feature-art">
