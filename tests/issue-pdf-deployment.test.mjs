@@ -42,7 +42,7 @@ test("deployment verification rejects size changes and same-size byte changes", 
     true,
   );
   assert.equal(
-    await verifyPublishedIssueAssets(sourcePdf, sourceCover, new Blob(["%PDF-1.7\nDIFFERENT"]), sourceCover, "jpg"),
+    await verifyPublishedIssueAssets(sourcePdf, sourceCover, new Blob(["%PDF-1.7\nSTARS & ORIGIN"]), sourceCover, "jpg"),
     false,
   );
   assert.equal(
