@@ -163,6 +163,8 @@ export async function GET(request: NextRequest) {
       )
     );
     if (
+      pdfVerification.error || !pdfVerification.data ||
+      coverVerification.error || !coverVerification.data ||
       pdfVerification.data.size !== pdfResult.data.size ||
       coverVerification.data.size !== coverResult.data.size ||
       !assetsVerified
