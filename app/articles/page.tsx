@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export const metadata = {
-  title: "Articles | ORBIT & ORIGIN",
+  title: "Articles",
   description: "Independent science reporting, astronomy, technology and the record of discovery.",
 };
 
