@@ -162,7 +162,11 @@ export async function GET(request: NextRequest) {
         extension,
       )
     );
-    if (!assetsVerified) {
+    if (
+      pdfVerification.data.size !== pdfResult.data.size ||
+      coverVerification.data.size !== coverResult.data.size ||
+      !assetsVerified
+    ) {
       await admin.rpc("fail_publication_operation", {
         p_operation_id: operationId,
         p_failure_reason: "Public PDF or cover failed signature, size or SHA-256 verification",
