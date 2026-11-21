@@ -2,6 +2,11 @@ import { randomUUID, timingSafeEqual } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { createAdminClient } from "@/lib/supabase/admin";
+import {
+  validateIssueCoverAsset,
+  validateIssuePdfAsset,
+  verifyPublishedIssueAssets,
+} from "@/src/editorial/issue-pdf-verification.mjs";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -58,6 +63,15 @@ export async function GET(request: NextRequest) {
       admin.storage.from("issue-drafts").download(coverPath),
     ]);
     if (pdfResult.error || !pdfResult.data || coverResult.error || !coverResult.data) {
+      await releaseIssueClaim(issue.id);
+      issuesFailed += 1;
+      continue;
+    }
+    const sourceAssetsValid = (
+      await validateIssuePdfAsset(pdfResult.data) &&
+      await validateIssueCoverAsset(coverResult.data, coverPath.split(".").pop()?.toLowerCase() || "")
+    );
+    if (!sourceAssetsValid) {
       await releaseIssueClaim(issue.id);
       issuesFailed += 1;
       continue;
@@ -137,15 +151,27 @@ export async function GET(request: NextRequest) {
       admin.storage.from("issue-public").download(publicPdfPath),
       admin.storage.from("issue-public").download(publicCoverPath),
     ]);
+    const assetsVerified = (
+      !pdfVerification.error && !!pdfVerification.data &&
+      !coverVerification.error && !!coverVerification.data &&
+      await verifyPublishedIssueAssets(
+        pdfResult.data,
+        coverResult.data,
+        pdfVerification.data,
+        coverVerification.data,
+        extension,
+      )
+    );
     if (
       pdfVerification.error || !pdfVerification.data ||
       coverVerification.error || !coverVerification.data ||
       pdfVerification.data.size !== pdfResult.data.size ||
-      coverVerification.data.size !== coverResult.data.size
+      coverVerification.data.size !== coverResult.data.size ||
+      !assetsVerified
     ) {
       await admin.rpc("fail_publication_operation", {
         p_operation_id: operationId,
-        p_failure_reason: "Uploaded asset verification failed",
+        p_failure_reason: "Public PDF or cover failed signature, size or SHA-256 verification",
       });
       await releaseIssueClaim(issue.id);
       issuesFailed += 1;

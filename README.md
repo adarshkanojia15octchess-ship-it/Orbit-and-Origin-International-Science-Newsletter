@@ -114,7 +114,8 @@ The dashboard checks both the trusted app-metadata role and the configured admin
 
 - Draft PDFs and cover images are uploaded to the private `issue-drafts` bucket.
 - The server validates file type signatures and enforces 25 MB PDF / 8 MB cover limits.
-- Publishing copies approved assets into the public, read-only `issue-public` bucket and only then changes the issue status to published.
+- Manual and scheduled publishing validate PDF/cover file signatures and size limits, copy assets into the public, read-only `issue-public` bucket, download the public copies, and compare SHA-256 hashes with the private sources before changing the issue status to published.
+- Issue PDFs remain in Supabase Storage rather than the Git repository. The public archive reads published database records dynamically, so releasing a new issue does not require a new Vercel build.
 - Public archive queries only return published issue records.
 
 ## Current platform scope
