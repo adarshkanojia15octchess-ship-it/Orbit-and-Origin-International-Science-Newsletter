@@ -32,19 +32,19 @@ const deskVisuals: Record<ArticleDepartment, DeskVisual> = {
     title: "Tapestry of Worlds",
     index: "01 / COSMOS",
     description: "Astronomy, astrophysics, cosmology and planetary science — exploring the universe from familiar worlds to distant frontiers.",
-    image: "https://images-assets.nasa.gov/image/PIA20051/PIA20051~large.jpg",
-    alt: "The Pillars of Creation, towering columns of gas and dust in the Eagle Nebula",
-    credit: "NASA, ESA and the Hubble Heritage Team",
-    sourceUrl: "https://www.nasa.gov/image-article/pillars-of-creation/",
+    image: "https://assets.science.nasa.gov/dynamicimage/assets/science/psd/photojournal/pia/pia09/pia09109/PIA09109.jpg?crop=faces%2Cfocalpoint&fit=crop&h=1100&w=1600",
+    alt: "A composite of the Pillars of the Eagle Nebula, combining Hubble visible-light and Spitzer infrared observations",
+    credit: "NASA/JPL-Caltech/STScI/Institut d'Astrophysique Spatiale",
+    sourceUrl: "https://science.nasa.gov/photojournal/unwrapping-the-pillars/",
   },
   "frontier-tech": {
     title: "Frontier Tech",
     index: "02 / INNOVATION",
     description: "The instruments, engineering and technologies that turn ambitious questions into measurable discoveries.",
-    image: "https://images-assets.nasa.gov/image/PIA14897/PIA14897~large.jpg",
-    alt: "NASA Curiosity rover exploring the surface of Mars",
-    credit: "NASA / JPL-Caltech",
-    sourceUrl: "https://science.nasa.gov/mission/msl-curiosity/",
+    image: "https://assets.science.nasa.gov/dynamicimage/assets/science/psd/photojournal/pia/pia15/pia15983/PIA15983.jpg?crop=faces%2Cfocalpoint&fit=crop&h=1100&w=1600",
+    alt: "NASA's Curiosity rover and parachute as seen by the Mars Reconnaissance Orbiter during descent to Mars",
+    credit: "NASA/JPL-Caltech/University of Arizona",
+    sourceUrl: "https://science.nasa.gov/photojournal/curiosity-flying-over-mars/",
   },
   "universal-record": {
     title: "The Universal Record",
@@ -137,12 +137,12 @@ export default async function ArticlesPage({ searchParams }: { searchParams: Sea
         <figure className="oo-articles-hero-art">
           {/* NASA image; the caption links to the credited source. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="https://images-assets.nasa.gov/image/PIA20051/PIA20051~large.jpg" alt="The Pillars of Creation in the Eagle Nebula" fetchPriority="high"/>
+          <img src="https://assets.science.nasa.gov/dynamicimage/assets/science/psd/photojournal/pia/pia09/pia09109/PIA09109.jpg?crop=faces%2Cfocalpoint&fit=crop&h=1100&w=1600" alt="A composite view of the Pillars of the Eagle Nebula in visible and infrared light" fetchPriority="high"/>
           <div className="oo-articles-hero-art-copy">
             <span>HUBBLE SPACE TELESCOPE · EAGLE NEBULA</span>
             <strong>Look closer.<br/><em>Ask better questions.</em></strong>
           </div>
-          <figcaption><span>Star formation · M16</span><a href="https://www.nasa.gov/image-article/pillars-of-creation/" target="_blank" rel="noopener noreferrer">NASA / ESA / STScI ↗</a></figcaption>
+          <figcaption><span>Star formation · M16</span><a href="https://science.nasa.gov/photojournal/unwrapping-the-pillars/" target="_blank" rel="noopener noreferrer">NASA / ESA / STScI ↗</a></figcaption>
         </figure>
       </header>
 
@@ -207,7 +207,7 @@ export default async function ArticlesPage({ searchParams }: { searchParams: Sea
             </div>
             <figure className="oo-articles-empty-art">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="https://images-assets.nasa.gov/image/PIA20051/PIA20051~large.jpg" alt="The Pillars of Creation, a region where stars are forming" loading="lazy"/>
+              <img src="https://assets.science.nasa.gov/dynamicimage/assets/science/psd/photojournal/pia/pia09/pia09109/PIA09109.jpg?crop=faces%2Cfocalpoint&fit=crop&h=1100&w=1600" alt="The Pillars of Creation, a region where stars are forming" loading="lazy"/>
               <figcaption>New stars taking shape in the Eagle Nebula · NASA / ESA / STScI</figcaption>
             </figure>
           </div>
