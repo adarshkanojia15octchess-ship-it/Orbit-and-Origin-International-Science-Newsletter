@@ -6,6 +6,11 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { getAdminContext } from "@/lib/auth/admin";
 import { createAdminClient } from "@/lib/supabase/admin";
+import {
+  validateIssueCoverAsset,
+  validateIssuePdfAsset,
+  verifyPublishedIssueAssets,
+} from "@/src/editorial/issue-pdf-verification.mjs";
 
 const issueSchema = z.object({
   issue_number: z.coerce.number().int().positive().max(999999),
@@ -131,10 +136,16 @@ export async function publishIssue(formData: FormData) {
   const { data: coverFile, error: coverReadError } = await supabase.storage.from("issue-drafts").download(coverPath);
   if (coverReadError || !coverFile) redirectToDashboard(formData, "error=publish-assets");
 
+  const coverExtension = coverPath.split(".").pop()?.toLowerCase() || "";
+  const sourceAssetsValid = (
+    await validateIssuePdfAsset(pdfFile) &&
+    await validateIssueCoverAsset(coverFile, coverExtension)
+  );
+  if (!sourceAssetsValid) redirectToDashboard(formData, "error=publish-integrity");
+
   const publicationOperation = randomUUID();
   const publicPrefix = `issues/${issue.issue_number}/published/${publicationOperation}`;
   const pdfPublicPath = `${publicPrefix}/edition.pdf`;
-  const coverExtension = coverPath.split(".").pop() || "jpg";
   const coverPublicPath = `${publicPrefix}/cover.${coverExtension}`;
 
   const pdfUrl = supabase.storage.from("issue-public").getPublicUrl(pdfPublicPath).data.publicUrl;
@@ -182,6 +193,29 @@ export async function publishIssue(formData: FormData) {
   if (coverPublishError) {
     await supabase.rpc("fail_publication_operation", { p_operation_id: publicationOperation, p_failure_reason: "Cover upload failed" });
     redirectToDashboard(formData, "error=publish-assets");
+  }
+
+  const [pdfVerification, coverVerification] = await Promise.all([
+    supabase.storage.from("issue-public").download(pdfPublicPath),
+    supabase.storage.from("issue-public").download(coverPublicPath),
+  ]);
+  const assetsVerified = (
+    !pdfVerification.error && !!pdfVerification.data &&
+    !coverVerification.error && !!coverVerification.data &&
+    await verifyPublishedIssueAssets(
+      pdfFile,
+      coverFile,
+      pdfVerification.data,
+      coverVerification.data,
+      coverExtension,
+    )
+  );
+  if (!assetsVerified) {
+    await supabase.rpc("fail_publication_operation", {
+      p_operation_id: publicationOperation,
+      p_failure_reason: "Public PDF or cover failed signature, size or SHA-256 verification",
+    });
+    redirectToDashboard(formData, "error=publish-integrity");
   }
 
   const { data: completed, error: completeError } = await supabase.rpc(

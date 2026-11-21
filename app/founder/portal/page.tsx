@@ -35,6 +35,7 @@ const feedback: Record<string, string> = {
   save: "The issue details could not be saved. Check the database connection and issue policies.",
   issue: "The selected issue could not be found.",
   "publish-assets": "The issue files could not be copied to public storage. Check the issue-public bucket and storage policies.",
+  "publish-integrity": "The PDF or cover did not pass the deployment integrity check. The issue was not marked as published; review the private draft and try again.",
   "publish-conflict": "Another publication operation is already acting on this issue. Refresh and try again.",
   publish: "The issue could not be published. Its draft should remain available for review.",
   schedule: "Choose a valid future date and time.",
