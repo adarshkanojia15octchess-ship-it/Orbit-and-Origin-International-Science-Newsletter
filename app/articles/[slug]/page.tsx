@@ -17,14 +17,14 @@ const departmentLabels: Record<ArticleDepartment, string> = {
 
 const departmentImages: Record<ArticleDepartment, { url: string; alt: string; credit: string }> = {
   "tapestry-of-worlds": {
-    url: "https://images-assets.nasa.gov/image/PIA20051/PIA20051~large.jpg",
-    alt: "The Pillars of Creation in the Eagle Nebula",
-    credit: "NASA, ESA and the Hubble Heritage Team",
+    url: "https://assets.science.nasa.gov/dynamicimage/assets/science/psd/photojournal/pia/pia09/pia09109/PIA09109.jpg?crop=faces%2Cfocalpoint&fit=crop&h=1100&w=1600",
+    alt: "A composite view of the Pillars of the Eagle Nebula in visible and infrared light",
+    credit: "NASA/JPL-Caltech/STScI/Institut d'Astrophysique Spatiale",
   },
   "frontier-tech": {
-    url: "https://images-assets.nasa.gov/image/PIA14897/PIA14897~large.jpg",
+    url: "https://assets.science.nasa.gov/dynamicimage/assets/science/psd/photojournal/pia/pia15/pia15983/PIA15983.jpg?crop=faces%2Cfocalpoint&fit=crop&h=1100&w=1600",
     alt: "NASA Curiosity rover exploring Mars",
-    credit: "NASA / JPL-Caltech",
+    credit: "NASA/JPL-Caltech/University of Arizona",
   },
   "universal-record": {
     url: "https://images-assets.nasa.gov/image/PIA18033/PIA18033~large.jpg",
