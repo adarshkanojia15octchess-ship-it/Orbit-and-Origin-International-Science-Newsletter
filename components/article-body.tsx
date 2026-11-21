@@ -1,10 +1,10 @@
 "use client";
 
-import { Fragment } from "react";
+import { Fragment, type ReactNode } from "react";
 
 function inlineParts(value: string, keyPrefix: string) {
   const expression = /(\*\*[^*]+\*\*|\*[^*]+\*|`[^`]+`|\[[^\]]+\]\(https:\/\/[^\s)]+\))/g;
-  const output: React.ReactNode[] = [];
+  const output: ReactNode[] = [];
   let cursor = 0;
   let match: RegExpExecArray | null;
   let index = 0;
@@ -32,7 +32,7 @@ function inlineParts(value: string, keyPrefix: string) {
 
 export default function ArticleBody({ markdown }: { markdown: string }) {
   const lines = markdown.replace(/\r\n/g, "\n").split("\n");
-  const blocks: React.ReactNode[] = [];
+  const blocks: ReactNode[] = [];
   let paragraph: string[] = [];
   let list: string[] = [];
   let ordered = false;
