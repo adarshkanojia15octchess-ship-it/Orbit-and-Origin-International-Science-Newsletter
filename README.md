@@ -87,6 +87,19 @@ RSS/Atom article links must use HTTPS and match that publisher's configured host
 
 The arXiv integration uses the existing in-process spacing queue to reduce repeated requests. Serverless instances do not share in-memory state; provider usage and feed availability still require monitoring. This is a curated source map, not an exhaustive index of all global science news.
 
+
+## Sky Explorer
+
+The public `/sky-explorer` section adds an interactive editorial sky atlas and a set of specialist astronomy viewers.
+
+- The reference atlas plots a curated set of Solar System bodies, stars, nebulae, clusters and galaxies. Selecting a marker or catalogue card centres the schematic chart, applies zoom and opens an educational object profile.
+- The live-sky viewer embeds Stellarium Web. Its own interface supplies observing-location, date/time, object search, centring and zoom controls. The local reference chart is deliberately labelled schematic; it is not a live ephemeris.
+- NASA Eyes on the Solar System and NASA Eyes on Exoplanets are embedded as separate 3D experiences. NASA documents iframe embedding and object-specific deep links for Eyes.
+- Existing Science Observatory integrations remain the data layer for JPL close approaches and the NASA Exoplanet Archive; the Sky Explorer links readers to those records rather than duplicating catalogue values.
+- Google Earth is linked as an external Earth-imagery and geography tool. Google documents that Google Earth has no client or embed API; Maps JavaScript and Map Tiles are not a celestial-sphere API. No unsupported Google Earth embed is claimed.
+
+The reference object profiles provide rounded educational context and source links. Distances and apparent magnitudes are not live ephemerides. The map's plotted coordinates are intentionally schematic; use Stellarium for observer-specific sky positions. NASA Eyes simulations are visualisations of mission and planetary data, not independent observations.
+
 ## Supabase setup
 
 Create a Supabase project and configure:
