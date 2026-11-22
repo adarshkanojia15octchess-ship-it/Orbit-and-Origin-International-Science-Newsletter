@@ -193,6 +193,11 @@ See `.env.example`. Never commit real credentials.
 
 ## Deployment
 
-The application is intended for Vercel or another Next.js-compatible host. Configure all required environment variables in the host, apply all five migrations to the production Supabase project, provision the administrator, configure Resend DNS and verify the production domain before accepting real subscribers. The subscription endpoint uses a server-only service-role key and Resend API key; never expose either to the browser.
+The application is intended for Vercel or another Next.js-compatible host. Configure all required environment variables in the host, apply all migrations to the production Supabase project, provision the administrator, configure Resend DNS and verify the production domain before accepting real subscribers. The subscription endpoint uses a server-only service-role key and Resend API key; never expose either to the browser.
 
 Scheduled publication requires `CRON_SECRET` in the deployment environment and a host that supports the configured cron schedule. Apply migrations 004 and 005 before using article, scheduling or atomic issue-publication claim features. External provider configuration and a live deployment have not yet been verified.
+
+
+## Subscriber management and Resend campaigns
+
+The private Founder Workspace includes paginated subscriber management, privacy-conscious CSV export and confirmed deletion, plus a Resend campaign desk with test sends, signed webhooks, bounce/complaint handling, and a durable PostgreSQL delivery queue. Apply `supabase/migrations/007_newsletter_campaign_operations.sql` and follow [the operations guide](docs/newsletter-operations.md) for Vercel secrets, the Resend webhook and the Supabase Vault + pg_cron worker schedule. Real campaigns remain disabled until all server-side delivery configuration is present.
