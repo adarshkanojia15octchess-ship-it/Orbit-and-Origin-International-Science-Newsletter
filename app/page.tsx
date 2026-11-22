@@ -249,7 +249,7 @@ export default async function Home() {
       </section>
 
       <section className="home-editorial-promise" aria-labelledby="home-promise-title">
-        <div className="home-promise-art" role="img" aria-label="The Hubble Deep Field, revealing thousands of distant galaxies">
+        <div className="home-promise-art">
           <span>ONE SMALL PATCH OF SKY.</span>
           <strong>THOUSANDS<br />OF GALAXIES.</strong>
           <a href="https://science.nasa.gov/image-detail/amf-pia12110/" target="_blank" rel="noopener noreferrer">Image: NASA · Hubble Deep Field ↗</a>
