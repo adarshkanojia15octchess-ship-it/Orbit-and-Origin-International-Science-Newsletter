@@ -1821,7 +1821,6 @@ button:disabled { opacity:.35; cursor:not-allowed; }
  .home-dispatch-button{width:100%;justify-content:space-between}
 }
 @media(prefers-reduced-motion:reduce){
- .home-hero-video{display:none}
  .home-hero-vignette,.home-department-image,.home-destination-card,.home-text-link span{transition:none!important}
  .home-department-card:hover .home-department-image,.home-department-card:focus-visible .home-department-image,.home-destination-card:hover{transform:none}
 }
