@@ -72,7 +72,7 @@ All new provider calls are server-mediated. Gaia and Euclid TAP queries are boun
 
 The Sky Explorer catalogue is maintained in `lib/sky-explorer/catalogue.mjs`; its TypeScript declaration is kept beside it in `catalogue.d.mts`. The helper exports centralise object categories, bounded zoom, map-focus transforms and NASA Eyes object links so that the UI and tests use the same behaviour.
 
-The `tests/sky-explorer.test.mjs` regression suite checks catalogue uniqueness and completeness, HTTPS source links, supported category mapping (including the Sun), finite zoom bounds, selected-object centring, and NASA Eyes link eligibility. Add new catalogue objects there before shipping changes.
+The `tests/sky-explorer.test.mjs` regression suite checks catalogue uniqueness and completeness, HTTPS source links, supported category mapping (including the Sun and Earth), finite zoom bounds, selected-object centring, and NASA Eyes link eligibility. Add new catalogue objects there before shipping changes. CI also runs `npm audit --audit-level=moderate` without suppressing failures.
 
 The reference diagram is deliberately a schematic catalogue selector. Its plotted positions are not live right ascension/declination coordinates and must not be used as an observing chart. Use embedded Stellarium Web for the current sky at a chosen date, time and observing location. NASA's Eyes experiences are embedded as distinct tools; NASA's official educator guidance provides supported embed examples and object/mission deep links: https://science.nasa.gov/eyes/museums/. NASA Eyes on Earth is included using NASA's published satellite-view embed example.
 
@@ -107,7 +107,7 @@ The public `/sky-explorer` section adds an interactive editorial sky atlas and a
 
 - The reference atlas plots a curated set of Solar System bodies, stars, nebulae, clusters and galaxies. Selecting a marker or catalogue card centres the schematic chart, applies zoom and opens an educational object profile.
 - The live-sky viewer embeds Stellarium Web. Its own interface supplies observing-location, date/time, object search, centring and zoom controls. The local reference chart is deliberately labelled schematic; it is not a live ephemeris.
-- NASA Eyes on the Solar System and NASA Eyes on Exoplanets are embedded as separate 3D experiences. NASA documents iframe embedding and object-specific deep links for Eyes.
+- NASA Eyes on the Solar System, Eyes on Exoplanets, Eyes on Earth and Eyes on Asteroids are embedded as separate 3D experiences. NASA documents iframe embedding and object-specific deep links for Eyes.
 - Existing Science Observatory integrations remain the data layer for JPL close approaches and the NASA Exoplanet Archive; the Sky Explorer links readers to those records rather than duplicating catalogue values.
 - Google Earth is linked as an external Earth-imagery and geography tool. Google documents that Google Earth has no client or embed API; Maps JavaScript and Map Tiles are not a celestial-sphere API. No unsupported Google Earth embed is claimed.
 
