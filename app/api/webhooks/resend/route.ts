@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
     event = resend.webhooks.verify({
       payload,
       headers: { id: eventId, timestamp, signature },
-      secret: webhookSecret,
+      webhookSecret,
     }) as unknown as ResendEvent;
   } catch {
     return NextResponse.json({ error: "Invalid webhook signature." }, { status: 400 });
