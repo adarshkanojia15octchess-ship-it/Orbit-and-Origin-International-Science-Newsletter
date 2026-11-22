@@ -50,7 +50,7 @@ create table public.campaigns (
 );
 create table public.email_deliveries (
   id uuid primary key default gen_random_uuid(),
-  campaign_id uuid not null references public.campaigns(id),
+  campaign_id uuid not null references public.campaigns(id) on delete cascade,
   subscriber_id uuid not null references public.subscribers(id),
   provider_message_id text,
   delivery_status text not null default 'queued'
