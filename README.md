@@ -67,6 +67,19 @@ The Stellar Census makes a bounded Gaia DR3 query for high-signal-to-noise posit
 
 All new provider calls are server-mediated. Gaia and Euclid TAP queries are bounded synchronous queries; larger analyses should use the archives' asynchronous interfaces or their science portals. NASA ADS is not enabled in this phase because it requires a separately provisioned private API token; arXiv and Crossref remain the public literature services.
 
+
+### Sky Explorer hardening and maintenance
+
+The Sky Explorer catalogue is maintained in `lib/sky-explorer/catalogue.mjs`; its TypeScript declaration is kept beside it in `catalogue.d.mts`. The helper exports centralise object categories, bounded zoom, map-focus transforms and NASA Eyes object links so that the UI and tests use the same behaviour.
+
+The `tests/sky-explorer.test.mjs` regression suite checks catalogue uniqueness and completeness, HTTPS source links, supported category mapping (including the Sun), finite zoom bounds, selected-object centring, and NASA Eyes link eligibility. Add new catalogue objects there before shipping changes.
+
+The reference diagram is deliberately a schematic catalogue selector. Its plotted positions are not live right ascension/declination coordinates and must not be used as an observing chart. Use embedded Stellarium Web for the current sky at a chosen date, time and observing location. NASA's Eyes experiences are embedded as distinct tools; NASA's official educator guidance provides supported embed examples and object/mission deep links: https://science.nasa.gov/eyes/museums/. NASA Eyes on Earth is included using NASA's published satellite-view embed example.
+
+Google Earth remains an external hand-off. Google's current developer guidance explicitly says Google Earth has no embed/client API; Maps JavaScript API and Map Tiles are separate products for building custom geographic experiences: https://developers.google.com/maps/documentation/earth/quick-reference. Do not add an iframe or claim an API integration for Google Earth unless Google officially documents a supported capability.
+
+Stellarium's open-source Web Engine can be embedded by building the WebGL engine and its assets, but it is a distinct integration from embedding Stellarium Web's hosted site. Review the project's AGPL-3.0 license and current developer documentation before vendoring or modifying its engine: https://github.com/Stellarium/stellarium-web-engine and https://stellarium.org/en/docs.html. The current site uses the hosted web experience and does not bundle the engine.
+
 ## Department Knowledge Desks
 
 Each public department page has a **Department Knowledge Desk** above the ORBIT & ORIGIN editorial archive. The desk presents source-published updates separately from articles written and published by ORBIT & ORIGIN.
