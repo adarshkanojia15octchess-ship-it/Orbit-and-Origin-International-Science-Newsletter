@@ -62,6 +62,11 @@ jobs:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/orbit_test
         run: bash scripts/test-publication-operations-postgres.sh
 
+      - name: Verify subscriber and campaign delivery queue in PostgreSQL
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/orbit_test
+        run: bash scripts/test-newsletter-campaigns-postgres.sh
+
       - name: Validate TypeScript
         run: npm run typecheck
 
