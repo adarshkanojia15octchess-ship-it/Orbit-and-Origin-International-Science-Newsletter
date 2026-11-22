@@ -41,12 +41,21 @@ alter table public.email_deliveries
   add column if not exists created_at timestamptz not null default now();
 
 alter table public.campaigns drop constraint if exists campaigns_status_check;
+update public.campaigns set status = 'completed' where status = 'sent';
 alter table public.campaigns
   add constraint campaigns_status_check
   check (status in ('draft', 'queued', 'sending', 'completed', 'failed'));
 
 create unique index if not exists email_deliveries_campaign_subscriber_unique
   on public.email_deliveries(campaign_id, subscriber_id);
+
+-- No browser role can read subscriber addresses through these operational tables.
+alter table public.campaigns enable row level security;
+alter table public.email_deliveries enable row level security;
+revoke all on public.campaigns, public.email_deliveries from public, anon, authenticated;
+grant select, insert, update, delete on public.campaigns, public.email_deliveries to service_role;
+alter table public.email_deliveries alter column id set default gen_random_uuid();
+
 
 -- Private operational tables remain RLS-protected and accessible only to service_role.
 
