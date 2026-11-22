@@ -57,7 +57,6 @@ export default function HomeCinematicHero() {
   return (
     <section className="home-cinematic-hero" aria-labelledby="home-hero-title">
       <div className="home-hero-media" aria-hidden="true">
-        <img className="home-hero-poster" src={posterUrl} alt="" fetchPriority="high" />
         {hasVideo && (
           <video
             ref={videoRef}
