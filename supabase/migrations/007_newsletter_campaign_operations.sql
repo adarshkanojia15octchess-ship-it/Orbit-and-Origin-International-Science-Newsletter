@@ -315,7 +315,7 @@ begin
          provider_message_id = coalesce(provider_message_id, p_provider_message_id),
          sent_at = coalesce(sent_at, now()), lock_token = null, locked_until = null, error_message = null
    where id = p_delivery_id and lock_token = p_claim_token
-     and delivery_status in ('sending', 'sent', 'delivered', 'bounced', 'complained', 'suppressed')
+     and delivery_status in ('sending', 'sent', 'delivered', 'bounced', 'complained', 'suppressed', 'failed')
   returning campaign_id into v_campaign_id;
   if not found then return false; end if;
   perform public.refresh_campaign_delivery_status(v_campaign_id);
