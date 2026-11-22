@@ -122,7 +122,7 @@ export default async function Home() {
 
   return (
     <main className="home-page">
-      <HomeCinematicHero />
+      <HomeCinematicHero hasLatestEdition={Boolean(latestIssue)} />
 
       <section className="home-editorial-intro" aria-labelledby="home-editorial-title">
         <div className="home-editorial-index">
