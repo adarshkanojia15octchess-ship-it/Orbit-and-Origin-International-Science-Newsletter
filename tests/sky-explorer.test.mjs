@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import {
   SKY_OBJECTS,
   clampSkyZoom,
@@ -72,4 +73,28 @@ test("catalogue validation detects duplicate IDs and invalid map coordinates", (
   const errors = validateSkyCatalogue(invalid);
   assert.ok(errors.some((error) => error.includes("unique")));
   assert.ok(errors.some((error) => error.includes("coordinates")));
+});
+
+
+const skyPageSource = readFileSync(new URL("../app/sky-explorer/sky-explorer-client.tsx", import.meta.url), "utf8");
+const rootLayoutSource = readFileSync(new URL("../app/layout.tsx", import.meta.url), "utf8");
+
+test("the Sky Explorer hero points to the book-based Cosmic Neighbourhood section", () => {
+  assert.match(skyPageSource, /id="cosmic-neighbourhood"/);
+  assert.match(skyPageSource, /href="#cosmic-neighbourhood"/);
+  assert.doesNotMatch(skyPageSource, /href="#sky-map"/);
+  assert.match(skyPageSource, /The Cosmic Web/);
+  assert.match(skyPageSource, /Tapestry of Worlds: Beyond Solar System and Universe/);
+});
+
+test("the five-viewer section and Google Earth hand-off stay correctly labelled", () => {
+  assert.match(skyPageSource, /NASA Eyes · Asteroids/);
+  assert.match(skyPageSource, /href=\{googleEarth\}[^>]*>Open Google Earth/);
+  assert.doesNotMatch(skyPageSource, /href=\{earth\}[^>]*>Open Google Earth/);
+});
+
+test("the global footer credits the book and both authors", () => {
+  assert.match(rootLayoutSource, /Tapestry of Worlds: Beyond Solar System and Universe/);
+  assert.match(rootLayoutSource, /Adarsh Kanojia \(author\)/);
+  assert.match(rootLayoutSource, /Rishi K\. Pal \(co-author\)/);
 });
