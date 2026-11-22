@@ -15,6 +15,7 @@ export const metadata: Metadata = {
 const publicNav = [
   ["Issues", "/issues"],
   ["Science Observatory", "/observatory"],
+  ["Sky Explorer", "/sky-explorer"],
   ["Articles", "/articles"],
   ["Tapestry of Worlds", "/departments/tapestry-of-worlds"],
   ["Frontier Tech", "/departments/frontier-tech"],
