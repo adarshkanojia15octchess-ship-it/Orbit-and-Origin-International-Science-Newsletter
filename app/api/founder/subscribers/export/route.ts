@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { getAdminContext } from "@/lib/auth/admin";
 import { createAdminClient } from "@/lib/supabase/admin";
 
@@ -7,11 +7,11 @@ export const dynamic = "force-dynamic";
 
 function csvCell(value: unknown) {
   let text = value == null ? "" : String(value);
-  if (/^[=+\-\@\t\r]/.test(text)) text = "'" + text;
+  if (/^[=+\-@\t\r]/.test(text)) text = "'" + text;
   return '"' + text.replace(/"/g, '""') + '"';
 }
 
-export async function GET(_request: NextRequest) {
+export async function GET() {
   const context = await getAdminContext();
   if (!context) return NextResponse.json({ error: "Forbidden" }, { status: 403, headers: { "Cache-Control": "no-store" } });
 
