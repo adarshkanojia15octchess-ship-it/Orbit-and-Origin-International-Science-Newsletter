@@ -67,6 +67,19 @@ The Stellar Census makes a bounded Gaia DR3 query for high-signal-to-noise posit
 
 All new provider calls are server-mediated. Gaia and Euclid TAP queries are bounded synchronous queries; larger analyses should use the archives' asynchronous interfaces or their science portals. NASA ADS is not enabled in this phase because it requires a separately provisioned private API token; arXiv and Crossref remain the public literature services.
 
+
+### Sky Explorer hardening and maintenance
+
+The Sky Explorer catalogue is maintained in `lib/sky-explorer/catalogue.mjs`; its TypeScript declaration is kept beside it in `catalogue.d.mts`. The helper exports centralise object categories, bounded zoom, map-focus transforms and NASA Eyes object links so that the UI and tests use the same behaviour.
+
+The `tests/sky-explorer.test.mjs` regression suite checks catalogue uniqueness and completeness, HTTPS source links, supported category mapping (including the Sun and Earth), finite zoom bounds, selected-object centring, and NASA Eyes link eligibility. Add new catalogue objects there before shipping changes. CI also runs `npm audit --audit-level=moderate` without suppressing failures.
+
+The reference diagram is deliberately a schematic catalogue selector. Its plotted positions are not live right ascension/declination coordinates and must not be used as an observing chart. Use embedded Stellarium Web for the current sky at a chosen date, time and observing location. NASA's Eyes experiences are embedded as distinct tools; NASA's official educator guidance provides supported embed examples and object/mission deep links: https://science.nasa.gov/eyes/museums/. NASA Eyes on Earth is included using NASA's published satellite-view embed example.
+
+Google Earth remains an external hand-off. Google's current developer guidance explicitly says Google Earth has no embed/client API; Maps JavaScript API and Map Tiles are separate products for building custom geographic experiences: https://developers.google.com/maps/documentation/earth/quick-reference. Do not add an iframe or claim an API integration for Google Earth unless Google officially documents a supported capability.
+
+Stellarium's open-source Web Engine can be embedded by building the WebGL engine and its assets, but it is a distinct integration from embedding Stellarium Web's hosted site. Review the project's AGPL-3.0 license and current developer documentation before vendoring or modifying its engine: https://github.com/Stellarium/stellarium-web-engine and https://stellarium.org/en/docs.html. The current site uses the hosted web experience and does not bundle the engine.
+
 ## Department Knowledge Desks
 
 Each public department page has a **Department Knowledge Desk** above the ORBIT & ORIGIN editorial archive. The desk presents source-published updates separately from articles written and published by ORBIT & ORIGIN.
@@ -86,6 +99,19 @@ RSS/Atom article links must use HTTPS and match that publisher's configured host
 **Evidence labels matter:** NASA/ESA/NSF/JPL news items are institutional announcements or research updates, not automatic independent peer review. arXiv records are explicitly labelled as preprints and are not represented as peer-reviewed papers merely because they appear in the desk. A source record is a path to the original material, not an ORBIT & ORIGIN endorsement. Read the paper, technical report or linked source before drawing conclusions.
 
 The arXiv integration uses the existing in-process spacing queue to reduce repeated requests. Serverless instances do not share in-memory state; provider usage and feed availability still require monitoring. This is a curated source map, not an exhaustive index of all global science news.
+
+
+## Sky Explorer
+
+The public `/sky-explorer` section adds an interactive editorial sky atlas and a set of specialist astronomy viewers.
+
+- The reference atlas plots a curated set of Solar System bodies, stars, nebulae, clusters and galaxies. Selecting a marker or catalogue card centres the schematic chart, applies zoom and opens an educational object profile.
+- The live-sky viewer embeds Stellarium Web. Its own interface supplies observing-location, date/time, object search, centring and zoom controls. The local reference chart is deliberately labelled schematic; it is not a live ephemeris.
+- NASA Eyes on the Solar System, Eyes on Exoplanets, Eyes on Earth and Eyes on Asteroids are embedded as separate 3D experiences. NASA documents iframe embedding and object-specific deep links for Eyes.
+- Existing Science Observatory integrations remain the data layer for JPL close approaches and the NASA Exoplanet Archive; the Sky Explorer links readers to those records rather than duplicating catalogue values.
+- Google Earth is linked as an external Earth-imagery and geography tool. Google documents that Google Earth has no client or embed API; Maps JavaScript and Map Tiles are not a celestial-sphere API. No unsupported Google Earth embed is claimed.
+
+The reference object profiles provide rounded educational context and source links. Distances and apparent magnitudes are not live ephemerides. The map's plotted coordinates are intentionally schematic; use Stellarium for observer-specific sky positions. NASA Eyes simulations are visualisations of mission and planetary data, not independent observations.
 
 ## Supabase setup
 

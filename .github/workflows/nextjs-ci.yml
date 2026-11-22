@@ -46,8 +46,8 @@ jobs:
       - name: Install project dependencies
         run: npm ci
 
-      - name: Report dependency vulnerabilities
-        run: npm audit --audit-level=low || true
+      - name: Block moderate-or-higher dependency vulnerabilities
+        run: npm audit --audit-level=moderate
 
       - name: Run automated tests
         run: npm test
