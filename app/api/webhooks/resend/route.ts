@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
     const resend = new Resend(apiKey);
     event = resend.webhooks.verify({
       payload,
-      headers: { "svix-id": eventId, "svix-timestamp": timestamp, "svix-signature": signature },
+      headers: { id: eventId, timestamp, signature },
       secret: webhookSecret,
     }) as unknown as ResendEvent;
   } catch {
