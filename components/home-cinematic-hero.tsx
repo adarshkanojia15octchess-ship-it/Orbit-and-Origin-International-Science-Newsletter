@@ -6,7 +6,7 @@ import Link from "next/link";
 const videoUrl = "https://svs.gsfc.nasa.gov/vis/a010000/a013800/a013846/13846_NEBULA_WIDE_MP4.webm";
 const posterUrl = "https://svs.gsfc.nasa.gov/vis/a010000/a013800/a013846/13846_NEBULA_WIDE_THUMB.jpg";
 
-export default function HomeCinematicHero() {
+export default function HomeCinematicHero({ hasLatestEdition }: { hasLatestEdition: boolean }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [hasVideo, setHasVideo] = useState(true);
@@ -91,7 +91,7 @@ export default function HomeCinematicHero() {
             curiosity, editorial care and a deep respect for evidence.
           </p>
           <div className="home-hero-actions">
-            <Link className="home-hero-primary" href="/latest">Enter the latest edition <span>↗</span></Link>
+            <Link className="home-hero-primary" href={hasLatestEdition ? "/latest" : "/issues"}>{hasLatestEdition ? "Enter the latest edition" : "Browse the issue archive"} <span>↗</span></Link>
             <Link className="home-hero-secondary" href="/sky-explorer">Explore the sky <span>↗</span></Link>
           </div>
         </div>
