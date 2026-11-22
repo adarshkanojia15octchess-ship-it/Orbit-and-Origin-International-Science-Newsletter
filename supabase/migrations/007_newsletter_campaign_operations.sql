@@ -1,4 +1,53 @@
 -- 007: Subscriber controls, durable campaign delivery and Resend events.
+
+-- Create the campaign ledger and per-recipient queue on fresh installs as well.
+create table if not exists public.campaigns (
+  id uuid primary key default gen_random_uuid(),
+  issue_id uuid not null references public.issues(id) on delete restrict,
+  subject text not null,
+  status text not null default 'draft',
+  queued_at timestamptz,
+  completed_at timestamptz,
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.email_deliveries (
+  id uuid primary key default gen_random_uuid(),
+  campaign_id uuid not null references public.campaigns(id) on delete cascade,
+  subscriber_id uuid references public.subscribers(id) on delete set null,
+  provider_message_id text,
+  delivery_status text not null default 'queued',
+  error_message text,
+  sent_at timestamptz,
+  created_at timestamptz not null default now(),
+  unique (campaign_id, subscriber_id)
+);
+
+alter table public.campaigns
+  add column if not exists issue_id uuid references public.issues(id) on delete restrict,
+  add column if not exists subject text,
+  add column if not exists status text not null default 'draft',
+  add column if not exists queued_at timestamptz,
+  add column if not exists completed_at timestamptz,
+  add column if not exists created_at timestamptz not null default now();
+
+alter table public.email_deliveries
+  add column if not exists campaign_id uuid references public.campaigns(id) on delete cascade,
+  add column if not exists subscriber_id uuid references public.subscribers(id),
+  add column if not exists provider_message_id text,
+  add column if not exists delivery_status text not null default 'queued',
+  add column if not exists error_message text,
+  add column if not exists sent_at timestamptz,
+  add column if not exists created_at timestamptz not null default now();
+
+alter table public.campaigns drop constraint if exists campaigns_status_check;
+alter table public.campaigns
+  add constraint campaigns_status_check
+  check (status in ('draft', 'queued', 'sending', 'completed', 'failed'));
+
+create unique index if not exists email_deliveries_campaign_subscriber_unique
+  on public.email_deliveries(campaign_id, subscriber_id);
+
 -- Private operational tables remain RLS-protected and accessible only to service_role.
 
 alter table public.campaigns
