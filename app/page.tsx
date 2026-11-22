@@ -185,7 +185,7 @@ export default async function Home() {
               <>
                 <span className="home-eyebrow">THE EDITORIAL LIBRARY</span>
                 <h3 id="home-latest-title-fallback">The next discovery starts here.</h3>
-                <p>Explore the publication's reading room and return as new editions are released.</p>
+                <p>Explore the publication&apos;s reading room and return as new editions are released.</p>
                 <Link className="home-text-link" href="/issues">Explore the issue archive <span>↗</span></Link>
               </>
             )}
