@@ -17,19 +17,29 @@ export async function GET() {
 
   try {
     const admin = createAdminClient();
-    const columns = ["email", "first_name", "subscription_status", "consent_at", "subscribed_at", "confirmed_at", "unsubscribed_at"] as const;
-    const rows: string[] = [columns.join(",")];
+    const header = "email,first_name,subscription_status,consent_at,subscribed_at,confirmed_at,unsubscribed_at";
+    const rows: string[] = [header];
     const pageSize = 1000;
     let offset = 0;
 
     while (true) {
       const { data, error } = await admin.from("subscribers")
-        .select(columns.join(","))
+        .select("email,first_name,subscription_status,consent_at,subscribed_at,confirmed_at,unsubscribed_at")
         .order("subscribed_at", { ascending: true })
         .range(offset, offset + pageSize - 1);
       if (error) throw error;
       const page = data || [];
-      for (const row of page) rows.push(columns.map((column) => csvCell(row[column])).join(","));
+      for (const row of page) {
+        rows.push([
+          csvCell(row.email),
+          csvCell(row.first_name),
+          csvCell(row.subscription_status),
+          csvCell(row.consent_at),
+          csvCell(row.subscribed_at),
+          csvCell(row.confirmed_at),
+          csvCell(row.unsubscribed_at),
+        ].join(","));
+      }
       if (page.length < pageSize) break;
       offset += pageSize;
       if (offset >= 100000) {
