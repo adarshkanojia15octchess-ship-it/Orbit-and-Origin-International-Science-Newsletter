@@ -10,7 +10,7 @@ import {
 } from "../lib/sky-explorer/catalogue.mjs";
 
 test("the curated sky catalogue has unique, complete and safe records", () => {
-  assert.equal(SKY_OBJECTS.length, 17);
+  assert.equal(SKY_OBJECTS.length, 18);
   assert.deepEqual(validateSkyCatalogue(), []);
   const ids = SKY_OBJECTS.map((object) => object.id);
   assert.equal(new Set(ids).size, ids.length);
@@ -23,12 +23,13 @@ test("the curated sky catalogue has unique, complete and safe records", () => {
 });
 
 test("Solar System objects, including the Sun, are placed in the correct category", () => {
-  for (const id of ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto"]) {
+  for (const id of ["sun", "moon", "earth", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto"]) {
     const object = SKY_OBJECTS.find((item) => item.id === id);
     assert.ok(object, "missing catalogue record: " + id);
     assert.equal(skyObjectCategory(object), "Solar System");
   }
   assert.equal(skyObjectCategory(SKY_OBJECTS.find((item) => item.id === "sirius")), "Stars");
+  assert.equal(skyObjectCategory(SKY_OBJECTS.find((item) => item.id === "earth")), "Solar System");
   assert.equal(skyObjectCategory(SKY_OBJECTS.find((item) => item.id === "andromeda")), "Deep sky");
 });
 
