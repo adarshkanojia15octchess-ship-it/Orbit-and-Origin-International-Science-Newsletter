@@ -70,6 +70,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <div>
             <Link className="wordmark" href={isReader ? "/issues" : "/"}>ORBIT <span>&amp;</span> ORIGIN</Link>
             <p>Exploring the Universe, Understanding Our Place.</p>
+            <p className="footer-book-credit">“Cosmic Neighbourhood” is inspired by <cite>Tapestry of Worlds: Beyond Solar System and Universe</cite>, written by Adarsh Kanojia (author) and Rishi K. Pal (co-author).</p>
             {!isReader && <p className="footer-contact"><a href={"mailto:" + contactEmail}>{contactEmail}</a></p>}
           </div>
           <div className="footer-links">
