@@ -1,0 +1,23 @@
+export type SkyObject = {
+  id: string;
+  name: string;
+  kind: string;
+  place: string;
+  ra: string;
+  dec: string;
+  x: number;
+  y: number;
+  mag: string;
+  distance: string;
+  description: string;
+  importance: string;
+  eyes?: string;
+  source: string;
+};
+export type SkyCategory = "All objects" | "Solar System" | "Stars" | "Deep sky";
+export const SKY_OBJECTS: readonly SkyObject[];
+export function skyObjectCategory(object: SkyObject): Exclude<SkyCategory, "All objects">;
+export function clampSkyZoom(value: number): number;
+export function getSkyFocusTransform(object: SkyObject, zoom: number): {translateX:number;translateY:number;scale:number};
+export function getNASAObjectUrl(object: SkyObject): string | null;
+export function validateSkyCatalogue(objects?: readonly SkyObject[]): string[];
