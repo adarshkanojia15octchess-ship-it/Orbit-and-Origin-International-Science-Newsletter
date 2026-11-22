@@ -101,6 +101,16 @@ test("subscriber deletion is administrator-gated", () => {
   assert.match(deleteAction, /\.from\("subscribers"\)[\s\S]*\.delete\(\)/);
 });
 
-test("one-click unsubscribe accepts the RFC 8058 query token", () => {
+test("one-click unsubscribe reads the RFC 8058 token from the query string", () => {
   assert.match(unsubscribeRoute, /request\.nextUrl\.searchParams\.get\("token"\)/);
+  assert.match(unsubscribeRoute, /form\.get\("List-Unsubscribe"\)\s*===\s*"One-Click"/);
+  assert.match(unsubscribeRoute, /new NextResponse\("OK", \{ status: 200/);
+});
+
+test("ordinary unsubscribe link GET is read-only and opens a confirmation page", () => {
+  const getHandler = unsubscribeRoute.match(/export async function GET[\s\S]*?(?=export async function POST)/)?.[0] || "";
+  assert.ok(getHandler, "GET handler should exist");
+  assert.match(getHandler, /NextResponse\.redirect/);
+  assert.match(getHandler, /confirmationUrl\.searchParams\.set\("token", token\)/);
+  assert.doesNotMatch(getHandler, /createAdminClient|\.update\(/);
 });
