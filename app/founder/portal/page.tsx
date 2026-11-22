@@ -137,6 +137,19 @@ export default async function FounderWorkspacePage({
         <FounderIssueUploader/>
       </section>
 
+
+      <section className="oo-communications-entry" aria-labelledby="communications-title">
+        <div>
+          <span className="kicker">04 / READER RELATIONS</span>
+          <h2 id="communications-title">Subscriber and campaign operations.</h2>
+          <p>Manage reader consent, export or remove subscriber records, and prepare carefully reviewed issue announcements.</p>
+        </div>
+        <div className="oo-communications-links">
+          <Link href="/founder/subscribers">Subscriber management ↗</Link>
+          <Link href="/founder/campaigns">Campaign delivery ↗</Link>
+        </div>
+      </section>
+
       <section className="oo-founder-section" aria-labelledby="editions-heading">
         <div className="oo-founder-section-heading">
           <div><span className="kicker">03 / Publication library</span><h2 id="editions-heading">Your editions.</h2></div>
